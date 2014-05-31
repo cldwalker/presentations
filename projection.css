@@ -6,6 +6,7 @@
 body {
    margin: 18pt;
    font-size: 24pt;
+   background-color: #d3def7;
 }
 
 /* Use all headings as slide titles, regardless of level. */
