@@ -46,8 +46,8 @@ TODO - preface with slideshare diagram
 - Create, edit, list and reset cache parameter groups
 - Create, edit, assign/authorize and delete cache security groups and subnet groups
 - Create, show, copy, delete and restore Redis snapshots
-*** Notes                                                             :notes:
-+ There's 34 actions in all
+**** Notes                                                            :notes:
+There's 34 actions in all
 *** Is it simple?                                                    :slide:
 Theoretically yes - it's just a FewClicks™ caching but ...
 - There are a number of moving parts and even more operations
@@ -56,15 +56,32 @@ Theoretically yes - it's just a FewClicks™ caching but ...
 - Grouping Redis and Memcached works until it doesn't.
 
 So /NO/
-*** Notes                                                             :notes:
+**** Notes                                                            :notes:
 - configuration, node types and redis/memcached disconnect can make it hard to reason about
 - redis and memcached have different concepts and features
 - redis has replication and backup. memcached has auto-discovery.
 - redis can be durable
 ** Architectural overview
-*** Key components
-- node: Smallest building block
-*** Key features/functions
+*** Key components                                                    :slide:
+- engine: Redis or Memcached
+- node: Smallest building block with its own DNS name and port
+- cluster: Group of nodes with the same engine type
+- cache parameter group: Group of parameters to be associated with a
+  cluster
+- cache security group: Controls network access to public cluster
+- cache subnet group: Controls network access to private cluster
+- Redis replication group: One primary/write cluster and up to five read clusters
+**** Notes                                                            :notes:
+- node runs an instance of memcached/redis
+- only one node per cluster 
+*** Key components (continued)                                        :slide:
+[[file:img/elasticache_components.png]]
+*** Key features/functions                                            :slide:
+- Run clusters of Memcached/Redis nodes
+- Detailed monitoring statistics of nodes via Cloudwatch
+- Failed nodes are automatically detected and replaced
+- Auto discovery of Memcached nodes
+*** Notes 
 ** Key indicators for use                                             :slide:
 ** Key indicators against use                                         :slide:
 ** Fundamental tradeoffs                                              :slide:
@@ -75,7 +92,7 @@ So /NO/
 ** What does it cost?                                                 :slide:
 * END
 
-#+OPTIONS: num:nil toc:nil tags:t
+#+OPTIONS: num:nil toc:nil tags:t H:4
 
 #+TAGS: slide(s)
 

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>AWS Elasticache</title>
-<!-- 2014-05-31 Sat 14:39 -->
+<!-- 2014-05-31 Sat 17:16 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Gabriel Horner" />
@@ -119,30 +119,29 @@ TODO - preface with slideshare diagram
 </li>
 </ul>
 </div>
+<div id="outline-container-sec-2-3-2-1" class="outline-5">
+<h5 id="sec-2-3-2-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
+<div class="outline-text-5" id="text-2-3-2-1">
+<p>
+There's 34 actions in all
+</p>
+</div>
+</div>
 </div>
 <div id="outline-container-sec-2-3-3" class="outline-4">
-<h4 id="sec-2-3-3">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<h4 id="sec-2-3-3">Is it simple?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-3-3">
-<ul class="org-ul">
-<li>There's 34 actions in all
-</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-sec-2-3-4" class="outline-4">
-<h4 id="sec-2-3-4">Is it simple?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
-<div class="outline-text-4" id="text-2-3-4">
 <p>
 Theoretically yes - it's just a FewClicks™ caching but &#x2026;
 </p>
 <ul class="org-ul">
-<li>there are a number of moving parts
+<li>There are a number of moving parts and even more operations
 </li>
-<li>different node types can impact throughput, latency
+<li>Different node types can impact throughput, latency.
 </li>
-<li>different configurations can impact reliability, durability, elasticity
+<li>Different configurations can impact reliability, durability, elasticity.
 </li>
-<li>grouping Redis and Memcached works until it doesn't
+<li>Grouping Redis and Memcached works until it doesn't.
 </li>
 </ul>
 
@@ -150,10 +149,9 @@ Theoretically yes - it's just a FewClicks™ caching but &#x2026;
 So <i>NO</i>
 </p>
 </div>
-</div>
-<div id="outline-container-sec-2-3-5" class="outline-4">
-<h4 id="sec-2-3-5">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
-<div class="outline-text-4" id="text-2-3-5">
+<div id="outline-container-sec-2-3-3-1" class="outline-5">
+<h5 id="sec-2-3-3-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
+<div class="outline-text-5" id="text-2-3-3-1">
 <ul class="org-ul">
 <li>configuration, node types and redis/memcached disconnect can make it hard to reason about
 </li>
@@ -167,14 +165,70 @@ So <i>NO</i>
 </div>
 </div>
 </div>
+</div>
 <div id="outline-container-sec-2-4" class="outline-3">
 <h3 id="sec-2-4">Architectural overview</h3>
 <div class="outline-text-3" id="text-2-4">
 </div><div id="outline-container-sec-2-4-1" class="outline-4">
-<h4 id="sec-2-4-1">Key components</h4>
+<h4 id="sec-2-4-1">Key components&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
+<div class="outline-text-4" id="text-2-4-1">
+<ul class="org-ul">
+<li>engine: Redis or Memcached
+</li>
+<li>node: Smallest building block with its own DNS name and port
+</li>
+<li>cluster: Group of nodes with the same engine type
+</li>
+<li>cache parameter group: Group of parameters to be associated with a
+cluster
+</li>
+<li>cache security group: Controls network access to public cluster
+</li>
+<li>cache subnet group: Controls network access to private cluster
+</li>
+<li>Redis replication group: One primary/write cluster and up to five read clusters
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-2-4-1-1" class="outline-5">
+<h5 id="sec-2-4-1-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
+<div class="outline-text-5" id="text-2-4-1-1">
+<ul class="org-ul">
+<li>node runs an instance of memcached/redis
+</li>
+<li>only one node per cluster 
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div id="outline-container-sec-2-4-2" class="outline-4">
-<h4 id="sec-2-4-2">Key features/functions</h4>
+<h4 id="sec-2-4-2">Key components (continued)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
+<div class="outline-text-4" id="text-2-4-2">
+
+<div class="figure">
+<p><img src="img/elasticache_components.png" alt="elasticache_components.png" />
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-4-3" class="outline-4">
+<h4 id="sec-2-4-3">Key features/functions&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
+<div class="outline-text-4" id="text-2-4-3">
+<ul class="org-ul">
+<li>Run clusters of Memcached/Redis nodes
+</li>
+<li>Detailed monitoring statistics of nodes via Cloudwatch
+</li>
+<li>Failed nodes are automatically detected and replaced
+</li>
+<li>Auto discovery of Memcached nodes
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-2-4-4" class="outline-4">
+<h4 id="sec-2-4-4">Notes</h4>
 </div>
 </div>
 <div id="outline-container-sec-2-5" class="outline-3">
@@ -211,7 +265,7 @@ So <i>NO</i>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Gabriel Horner</p>
-<p class="date">Created: 2014-05-31 Sat 14:39</p>
+<p class="date">Created: 2014-05-31 Sat 17:16</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.2.1 (<a href="http://orgmode.org">Org</a> mode 8.2.6)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
