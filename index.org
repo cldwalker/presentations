@@ -1,140 +1,79 @@
-#+TITLE: Example Presentation
-#+AUTHOR: Stuart Sierra
+#+TITLE: AWS Elasticache
+#+AUTHOR: Gabriel Horner
+#+EMAIL: gabriel@cognitect.com
 
-#+BEGIN_HTML
-<p>Type <strong>T</strong> to begin the slide show.</p>
-#+END_HTML
-
-* Org-HTML-Slideshow                                                  :slide:
-
-Make slides from Emacs Org-Mode!
-
-** Making Slides                                                      :slide:
-
-Org-Mode headlines with the =:slide:= tag will become slides.
-
-** Headlines Don't Have to be Slides
-
-This section doesn't have a =:slide:= tag, so it will *not* become a slide, although it is still part of the exported HTML document.
-
-** Use Lists For Bullets                                              :slide:
-
-- Use Org-Mode lists for bullet points
-- You can make nested bullet lists
-  - With sub-lists
-  - Like this
-
-** Or Low-Level Headings                                              :slide:
-
-**** By default
-***** Org-Mode headings below level 3
-****** Become bullets
-****** Meaning they *cannot* be slides
-**** This is configurable
-***** See [[http://orgmode.org/manual/Export-options.html][Export Options in the Org-Mode manual]]
-
-** Slides Can Be Nested                                               :slide:
-
-You can use the structure of the Org-Mode document to group your slides.
-
-For example, this slide is a *level-2* Org-Mode heading.
-
-*** Slide Headings Can Be Nested                                      :slide:
-
-This slide is a *level-3* Org-Mode heading, inside the previous one.
-
-* Presenter Notes                                                     :slide:
-
-- Slides can have presenter notes
-- Add a sub-heading with the =:notes:= tag
-  
-** A Slide with Notes                                                 :slide:
-
-- This slide has notes
-- Notes are only visible to presenter
-
+* AWS ElastiCache Briefing                                            :slide:
+* Choosing to use
+** What is it?                                                        :slide:
+- Amazon ElastiCache is a web service that provides an
+  in-memory cache for your AWS application.
+- This cache is a scalable cluster of Memcached or Redis protocol-compliant
+  server nodes.
+- This service has a number of features to streamline the
+  management, monitoring and operation of these nodes.
 *** Notes                                                             :notes:
 
-- Presenter notes for this slide
-- Not displayed as part of the slide
-- Displayed in Presenter Preview window
-- Only one =:notes:= section per slide allowed
+- Amazon ElastiCache is protocol-compliant with Memcached and Redis,
+  so applications that already use another existing Memcached or Redis
+  environment can work seamlessly with this service
+** What problems does ElastiCache strive to solve?                    :slide:
+- Problem 1: Building a caching cluster requires
+  provisioning a server, installing caching software and knowledge of
+  how to setup a cluster.
+- Problem 2: Operating a caching cluster requires configuring it,
+  understanding and mitigating its failure modes, updating software,
+  backups (if possible) and more.
+- Problem 3: Monitoring a caching cluster requires gathering a cluster's
+  metrics and having a useful way of interpreting them.
+- Problem 4: Automate all of the above to make a scalable, elastic
+  and fault-tolerant cluster.
+*** Notes                                                             :notes:
+- p2: backups only for redis
+- p2: configuring it is not a solved problem but hopefully one that
+  starts out with more desirable defaults
+- p3: i.e. a visual way perhaps a dashboard
+- p3: you also need to understand how to take action on those metrics
+- p4: fault-tolerant here means being able to lose a node and have one
+  automatically take its place.
+** Fundamental semantics
+*** What is it 'about'?                                              :slide:
+ElastiCache aims to be an easy way of adding a reliable, scalable and
+managed caching layer to your AWS app.
+TODO - preface with slideshare diagram
+*** What are the primary operations?                                   :slide:
+- Create, edit, reboot and delete cache clusters
+- Create, edit, promote and delete Redis replication groups
+- Create, edit, list and reset cache parameter groups
+- Create, edit, assign/authorize and delete cache security groups and subnet groups
+- Create, show, copy, delete and restore Redis snapshots
+*** Notes                                                             :notes:
++ There's 34 actions in all
+*** Is it simple?                                                    :slide:
+Theoretically yes - it's just a FewClicks™ caching but ...
+- There are a number of moving parts and even more operations
+- Different node types can impact throughput, latency.
+- Different configurations can impact reliability, durability, elasticity.
+- Grouping Redis and Memcached works until it doesn't.
 
-* Source Code                                                         :slide:
-
-Use =begin_src/end_src= blocks to include source code.
-
-#+begin_src clojure
-  (defn example []
-    (println "This is sample source code."))
-#+end_src
-
-** Syntax Highlighting                                                :slide:
-
-- Org-Mode HTML export uses [[http://www.emacswiki.org/emacs/Htmlize][htmlize.el]]
-- Code in exported HTML will match your current Emacs theme
-  - Choose a theme that looks good on a projector!
-
-** Syntax Highlighting with CSS Classes                               :slide:
-
-- Set the Emacs variable 
-  - =org-export-htmlize-output-type= 
-  - to the symbol =css=
-  - (Does not work as a buffer-local variable)
-- Htmlize.el will add SPAN tags with CSS classes
-  - Named for each font face, e.g. =org-comment=
-- Examine HTML output to see class names
-- Add CSS styles to set colors
-
-* Images                                                              :slide:
-
-- Slides can contain images
-  - Any file type a browser can display
-- See also these Emacs variables:
-  - =org-export-html-inline-images=
-  - =org-export-html-inline-image-extensions=
-    - Controls which file types get exported
-- See [[http://orgmode.org/manual/Images-in-HTML-export.html][Images in HTML Export in the Org-Mode manual]].
-
-** Slide with Image                                                   :slide:
-
-Make a =file:= link with the path to the image and no link text.
-
-[[file:example-image.svg]]
-
-This example image is public-domain [[http://openclipart.org/detail/165554/geodesic_dome-by-yoderj][clip art by Josiah / yoderj]].
-
-* Styling                                                             :slide:
-
-- Use CSS styles to control appearance of slides
-- Extra tags on a slide become extra CSS classes on its HTML
-
-** Org-Mode Tag as CSS Class                          :slide:blue_background:
-
-- This slide has the =:blue_background:= tag
-  - Which is a class defined in =projection.css=
-- Make up your own tags
-  - Add them to the CSS file
-
-* Placing Stylesheets/JavaScript                                      :slide:
-
-Include the stylesheets and JavaScript at the *bottom* of your Org-Mode file.
-
-They must go at the bottom because the Google Closure Library does not support an on-DOM-ready event. See the [[http://groups.google.com/group/closure-library-discuss/browse_thread/thread/1beecbb5d6afcb41/075c536259653946][Closure mailing list discussion]] for an explanation.
-
-** Warning About Hidden Headlines                                     :slide:
-
-Stylesheets and JavaScript will *not* be loaded if the *last* headline in your Org-Mode file is hidden by any of:
-
-- =COMMENT= at the start of the heading
-- =#+COMMENT= at the start of the line
-- =:noexport:= tag, or missing =:export:= tag
-
-See [[http://orgmode.org/manual/Comment-lines.html][Comment lines]] and [[http://orgmode.org/manual/Selective-export.html][Selective export]] in the Org-Mode manual for details.
-
-** The End                                                            :slide:
-
-Sometimes it's safest to add an "empty" heading at the end of your document to make sure the stylesheets and JavaScript are included.
+So /NO/
+*** Notes                                                             :notes:
+- configuration, node types and redis/memcached disconnect can make it hard to reason about
+- redis and memcached have different concepts and features
+- redis has replication and backup. memcached has auto-discovery.
+- redis can be durable
+** Architectural overview
+*** Key components
+- node: Smallest building block
+*** Key features/functions
+** Key indicators for use                                             :slide:
+** Key indicators against use                                         :slide:
+** Fundamental tradeoffs                                              :slide:
+** What are some alternatives?                                        :slide:
+** Application characteristics                                        :slide:
+** Application characteristics (continued)                             :slide:
+** Operational characteristics                                        :slide:
+** What does it cost?                                                 :slide:
+* END
 
 #+OPTIONS: num:nil toc:nil tags:t
 
