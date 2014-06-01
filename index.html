@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>AWS Elasticache</title>
-<!-- 2014-05-31 Sat 20:56 -->
+<!-- 2014-06-01 Sun 15:22 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Gabriel Horner" />
@@ -228,7 +228,7 @@ cluster
 </li>
 <li>Auto discovery of Memcached nodes
 </li>
-<li>Backup and restore for Redis nodes
+<li>Backup and restore including automated daily snapshots
 </li>
 <li>Replication groups for Redis
 </li>
@@ -252,6 +252,8 @@ Amazon supports Java and PHP by default.
 Snapshot mechanism can be used to migrate a Redis cache to ElastiCache
 </li>
 <li>Redis replication - ability to replace primary within a group
+</li>
+<li>Redis replication group has no client and requires using API
 </li>
 </ul>
 </div>
@@ -315,7 +317,7 @@ automated
 </li>
 <li>Compatible: Native access to Memached or Redis
 </li>
-<li>Scalability: add and remove nodes with FewClicks™
+<li>Scalability: Easily add and remove nodes
 </li>
 <li>Reliability: Automatic failure detection and recovery
 </li>
@@ -337,7 +339,10 @@ You give up:
 <li>Fine grained control of node failure recovery
 </li>
 <li>Fine-grained control of Redis backups, slaves of slaves in
-replication groups and having more than 5 slaves in a replication group.
+replication groups and having more than 5 slaves in a replication
+group.
+</li>
+<li><a href="http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/ClientConfig.html#ClientConfig.RestrictedCommands">Certain Redis commands</a>
 </li>
 <li>Preferred tooling for metrics and notifications around your caching
 engine.
@@ -403,7 +408,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 <ul class="org-ul">
 <li>Environment: Hosted on AWS
 </li>
-<li>Docs: Excellent like most AWS documentation
+<li>Docs: Excellent, like most AWS documentation
 </li>
 <li>API quality:
 <ul class="org-ul">
@@ -450,10 +455,230 @@ by Amazon.
 </div>
 <div id="outline-container-sec-2-13" class="outline-3">
 <h3 id="sec-2-13">Operational characteristics&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-2-13">
+<ul class="org-ul">
+<li>Latency
+<ul class="org-ul">
+<li>Low latency to other Availability Zones (AZ) in the same region
+</li>
+<li>According to <a href="http://blog.meldium.com/home/2013/9/13/benchmarking-redis-on-aws-elasticache">this post</a>, 99th percentile latency from a Redis node to an EC2
+instance was in single digit milliseconds except for the micro and
+small types which were orders of magnitude more.
+</li>
+</ul>
+</li>
+<li>Throughput
+<ul class="org-ul">
+<li>Caches are designed to provide high throughput.
+</li>
+<li>Blog post used redis-benchmark and found throughput ranging from 10k to 70k ops per
+second, depending on node type.
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-2-13-1" class="outline-4">
+<h4 id="sec-2-13-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-2-13-1">
+<ul class="org-ul">
+<li>Amazon describes latency across their services with low, medium and
+high.
+</li>
+<li>Without knowing if this company is properly benchmarking on EC2, only
+treat numbers as rough orders of magnitude
+</li>
+<li>As long as its a cache hit, throughput can be high
+</li>
+<li>redis-benchmark comes with Redis and allows you to specify which
+commands to run.
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div id="outline-container-sec-2-14" class="outline-3">
-<h3 id="sec-2-14">What does it cost?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<h3 id="sec-2-14">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-14">
+<ul class="org-ul">
+<li>Throughput (cont)
+<ul class="org-ul">
+<li>Diminishing returns on throughput for largest Redis nodes. This is
+because Redis is single-threaded and in the largest 
+instances you're mostly paying for more unused cores.
+</li>
+</ul>
+</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="img/redis_benchmarks.png" alt="redis_benchmarks.png" />
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-14-1" class="outline-4">
+<h4 id="sec-2-14-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-2-14-1">
+<ul class="org-ul">
+<li>mid-range nodes offer higher ECUs - EC2 Computing Units
+</li>
+<li>Yes, I've only talked about Redis. Found no numbers on Memcached but
+since it's multi-threaded it should do better with larger nodes.
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-15" class="outline-3">
+<h3 id="sec-2-15">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-2-15">
+<ul class="org-ul">
+<li>Scalability
+<ul class="org-ul">
+<li>Writes scale out for Memcached - 20 node limit and then manually request
+</li>
+<li>Writes do not scale out for Redis - one node limit per cluster
+</li>
+<li>Reads scale out only for Redis - 5 node limit per cluster
+</li>
+<li>Both write and read nodes scale up but require new clusters
+</li>
+<li><a href="http://redislabs.com/blog/the-endless-redis-replication-loop-what-why-and-how-to-solve-it">There may be demons</a> with Redis replication, Redis 2.6.X and &gt; 25GB 
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-2-16" class="outline-3">
+<h3 id="sec-2-16">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-2-16">
+<ul class="org-ul">
+<li>Elasticity
+<ul class="org-ul">
+<li>Adding and removing nodes is elastic - takes a few minutes
+</li>
+<li>Scaling up is not elastic
+<ul class="org-ul">
+<li>Requires upgrading the <i>whole</i> cluster
+</li>
+<li>Requires new cluster setup i.e. configuring security
+</li>
+<li>Requires restoring from a backup or recaching.
+</li>
+</ul>
+</li>
+<li>None of this is automated elasticity
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-2-16-1" class="outline-4">
+<h4 id="sec-2-16-1">Notes</h4>
+<div class="outline-text-4" id="text-2-16-1">
+<ul class="org-ul">
+<li>Takes a few minutes assuming you're configured correctly
+</li>
+<li>Clients poll every minute for auto discovery
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-17" class="outline-3">
+<h3 id="sec-2-17">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-2-17">
+<ul class="org-ul">
+<li>Security
+<ul class="org-ul">
+<li>By default network access is turned off to your cluster
+</li>
+<li>To allow access to a public cluster, create a security group and associate it with an
+EC2 security group
+</li>
+</ul>
+</li>
+</ul>
+
+
+<div class="figure">
+<p><img src="img/datomic_security_group.png" alt="datomic_security_group.png" />
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-17-1" class="outline-4">
+<h4 id="sec-2-17-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-2-17-1">
+<ul class="org-ul">
+<li>"IP-range based access control is currently not enabled for Cache
+Clusters"
+</li>
+<li>"Currently, all clients to an ElastiCache Cluster must be within the
+Amazon EC2 network" - You can always hope
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-18" class="outline-3">
+<h3 id="sec-2-18">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-2-18">
+<ul class="org-ul">
+<li>Security
+<ul class="org-ul">
+<li>Supports private clusters within a Virtual Private Cloud (VPC). This requires:
+<ul class="org-ul">
+<li>A VPC with at least one subnet
+</li>
+<li>A Cache Subnet Group for your VPC to associate with previous subnet
+</li>
+<li>Allocating enough CIDR blocks to your subnet to allow for spare
+IPS needed for cache node replacement
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-2-19" class="outline-3">
+<h3 id="sec-2-19">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-2-19">
+<ul class="org-ul">
+<li>Failure Modes
+<ul class="org-ul">
+<li>Region fails - that's a problem
+</li>
+<li>AZ fails - you can mitigate this
+</li>
+<li>Cache node fails - automatically detected and replaced
+</li>
+<li>Redis primary fails - Can result in write downtime for 3-6 min. If
+primary fails to heal, manually promote a read
+</li>
+<li>Cache node reboots
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-2-19-1" class="outline-4">
+<h4 id="sec-2-19-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-2-19-1">
+<ul class="org-ul">
+<li>Could explain how cache node failures work
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-20" class="outline-3">
+<h3 id="sec-2-20">What does it cost?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-2-20">
 <ul class="org-ul">
 <li>Billing is per hour per node ($0.022 to $1.207).
 </li>
@@ -472,9 +697,9 @@ by Amazon.
 </ul>
 </div>
 </div>
-<div id="outline-container-sec-2-15" class="outline-3">
-<h3 id="sec-2-15">What does it cost? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
-<div class="outline-text-3" id="text-2-15">
+<div id="outline-container-sec-2-21" class="outline-3">
+<h3 id="sec-2-21">What does it cost? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-2-21">
 <ul class="org-ul">
 <li>Data transfer:
 <ul class="org-ul">
@@ -487,9 +712,35 @@ end.
 </li>
 <li>Backup: Storage is $0.085/GB every month. Data transfer is no charge.
 </li>
-<li>For more, see <a href="https://aws.amazon.com/elasticache/pricing/">pricing page</a>
+<li>For more, see <a href="https://aws.amazon.com/elasticache/pricing/">pricing
+page</a>
 </li>
 </ul>
+</div>
+</div>
+<div id="outline-container-sec-2-22" class="outline-3">
+<h3 id="sec-2-22">In Use</h3>
+<div class="outline-text-3" id="text-2-22">
+</div><div id="outline-container-sec-2-22-1" class="outline-4">
+<h4 id="sec-2-22-1">Handling failure modes</h4>
+<div class="outline-text-4" id="text-2-22-1">
+<ul class="org-ul">
+<li>AZ fails - Prepare for this by having a read Redis replica in
+another AZ. Possible to do in Memcached but it's costly
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-2-22-1-1" class="outline-5">
+<h5 id="sec-2-22-1-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
+<div class="outline-text-5" id="text-2-22-1-1">
+<ul class="org-ul">
+<li>Possible to handle AZ failure in Memcached but requires doings this
+in the app layer and increasing the number of writes to redundant nodes
+</li>
+<li></li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -502,7 +753,7 @@ end.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Gabriel Horner</p>
-<p class="date">Created: 2014-05-31 Sat 20:56</p>
+<p class="date">Created: 2014-06-01 Sun 15:22</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.2.1 (<a href="http://orgmode.org">Org</a> mode 8.2.6)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

@@ -84,7 +84,7 @@ So /NO/
 - Detailed monitoring statistics of nodes via Cloudwatch
 - Failed nodes are automatically detected and replaced
 - Auto discovery of Memcached nodes
-- Backup and restore for Redis nodes
+- Backup and restore including automated daily snapshots
 - Replication groups for Redis
 - Full integration with VPC
 - Accessible from AWS Console, API or CLI
@@ -96,6 +96,7 @@ So /NO/
 - Backups are made to s3. Backups can be done manually or automatic.
   Snapshot mechanism can be used to migrate a Redis cache to ElastiCache
 - Redis replication - ability to replace primary within a group
+- Redis replication group has no client and requires using API
 ** Key indicators for use                                             :slide:
 - Your app, db or caching target is on AWS
 - You want to use Redis or Memcached
@@ -115,7 +116,7 @@ You get:
 - Managed: Provisioning, management and even patch updating are
   automated
 - Compatible: Native access to Memached or Redis
-- Scalability: add and remove nodes with FewClicks™
+- Scalability: Easily add and remove nodes
 - Reliability: Automatic failure detection and recovery
 - Great integration with AWS: metrics, security, notifications
 ** Fundamental tradeoffs (cont)                                       :slide:
@@ -124,7 +125,9 @@ You give up:
 - Being anywhere but AWS
 - Fine grained control of node failure recovery
 - Fine-grained control of Redis backups, slaves of slaves in
-  replication groups and having more than 5 slaves in a replication group.
+  replication groups and having more than 5 slaves in a replication
+  group.
+- [[http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/ClientConfig.html#ClientConfig.RestrictedCommands][Certain Redis commands]]
 - Preferred tooling for metrics and notifications around your caching
   engine.
 - Unsupported versions of Redis or Memcached
@@ -151,7 +154,7 @@ You give up:
 Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 ** Application characteristics                                        :slide:
 - Environment: Hosted on AWS
-- Docs: Excellent like most AWS documentation
+- Docs: Excellent, like most AWS documentation
 - API quality:
   - Well done for a non-trivial API.
   - Each operation and its parameters [[http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/Welcome.html][are documented]].
@@ -168,6 +171,82 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
   - Marked as Beta
 - Experience reports: TODO
 ** Operational characteristics                                        :slide:
+- Latency
+  - Low latency to other Availability Zones (AZ) in the same region
+  - According to [[http://blog.meldium.com/home/2013/9/13/benchmarking-redis-on-aws-elasticache][this post]], 99th percentile latency from a Redis node to an EC2
+    instance was in single digit milliseconds except for the micro and
+    small types which were orders of magnitude more.
+- Throughput
+  - Caches are designed to provide high throughput.
+  - Blog post used redis-benchmark and found throughput ranging from 10k to 70k ops per
+    second, depending on node type.
+*** notes                                                             :notes:
+- Amazon describes latency across their services with low, medium and
+  high.
+- Without knowing if this company is properly benchmarking on EC2, only
+  treat numbers as rough orders of magnitude
+- As long as its a cache hit, throughput can be high
+- redis-benchmark comes with Redis and allows you to specify which
+  commands to run.
+** Operational characteristics (cont)                                 :slide:
+- Throughput (cont)
+  - Diminishing returns on throughput for largest Redis nodes. This is
+    because Redis is single-threaded and in the largest 
+    instances you're mostly paying for more unused cores.
+
+[[file:img/redis_benchmarks.png]]
+*** notes                                                             :notes:
+- mid-range nodes offer higher ECUs - EC2 Computing Units
+- Yes, I've only talked about Redis. Found no numbers on Memcached but
+  since it's multi-threaded it should do better with larger nodes.
+** Operational characteristics (cont)                                 :slide:
+- Scalability
+  - Writes scale out for Memcached - 20 node limit and then manually request
+  - Writes do not scale out for Redis - one node limit per cluster
+  - Reads scale out only for Redis - 5 node limit per cluster
+  - Both write and read nodes scale up but require new clusters
+  - [[http://redislabs.com/blog/the-endless-redis-replication-loop-what-why-and-how-to-solve-it][There may be demons]] with Redis replication, Redis 2.6.X and > 25GB 
+** Operational characteristics (cont)                                 :slide:
+- Elasticity
+  - Adding and removing nodes is elastic - takes a few minutes
+  - Scaling up is not elastic
+    - Requires upgrading the /whole/ cluster
+    - Requires new cluster setup i.e. configuring security
+    - Requires restoring from a backup or recaching.
+  - None of this is automated
+*** Notes
+- Takes a few minutes assuming you're configured correctly
+- Clients poll every minute for auto discovery
+** Operational characteristics (cont)                                 :slide:
+- Security
+  - By default network access is turned off to your cluster
+  - To allow access to a public cluster, create a security group and associate it with an
+    EC2 security group
+
+[[file:img/datomic_security_group.png]]
+
+*** Notes                                                             :notes:
+- "IP-range based access control is currently not enabled for Cache
+  Clusters"
+- "Currently, all clients to an ElastiCache Cluster must be within the
+  Amazon EC2 network" - You can always hope
+** Operational characteristics (cont)                                 :slide:
+- Security
+  - Supports private clusters within a Virtual Private Cloud (VPC). This requires:
+    - A VPC with at least one subnet
+    - A Cache Subnet Group for your VPC to associate with previous subnet
+    - Allocating enough CIDR blocks to your subnet to allow for spare
+      IPS needed for cache node replacement
+** Operational characteristics (cont)                                 :slide:
+- Failure Modes
+  - Region fails - that's a problem
+  - AZ fails - you can mitigate this
+  - Cache node fails - automatically detected and replaced
+  - Redis primary fails - Can result in write downtime for 3-6 min. If
+    primary fails to heal, manually promote a read
+  - Cache node reboots
+*** Notes                                                             :notes:
+- Could explain how cache node failures work
 ** What does it cost?                                                 :slide:
 - Billing is per hour per node ($0.022 to $1.207).
 - Partial hours get rounded up.
@@ -181,7 +260,16 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
   - Charge on EC2 instance to another AZ. Charge is only EC2 instance
     end.
 - Backup: Storage is $0.085/GB every month. Data transfer is no charge.
-- For more, see [[https://aws.amazon.com/elasticache/pricing/][pricing page]]
+- For more, see [[https://aws.amazon.com/elasticache/pricing/][pricing
+  page]]
+** In Use
+*** Handling failure modes
+- AZ fails - Prepare for this by having a read Redis replica in
+  another AZ. Possible to do in Memcached but it's costly
+**** notes                                                            :notes:
+- Possible to handle AZ failure in Memcached but requires doings this
+  in the app layer and increasing the number of writes to redundant nodes
+- 
 * END
 
 #+OPTIONS: num:nil toc:nil tags:t H:4
