@@ -61,6 +61,9 @@ So /NO/
 - redis and memcached have different concepts and features
 - redis has replication and backup. memcached has auto-discovery.
 - redis can be durable
+- Grouping the two can be confusing as one concept may not apply to
+  another i.e. replication and some limits don't apply to others i.e.
+  node limit per cluster
 ** Architectural overview
 *** Key components                                                    :slide:
 - engine: Redis or Memcached
@@ -74,22 +77,111 @@ So /NO/
 **** Notes                                                            :notes:
 - node runs an instance of memcached/redis
 - only one node per cluster 
-*** Key components (continued)                                        :slide:
+*** Key components (cont)                                             :slide:
 [[file:img/elasticache_components.png]]
 *** Key features/functions                                            :slide:
-- Run clusters of Memcached/Redis nodes
+- Provision and operation of clusters of Memcached/Redis nodes
 - Detailed monitoring statistics of nodes via Cloudwatch
 - Failed nodes are automatically detected and replaced
 - Auto discovery of Memcached nodes
-*** Notes 
+- Backup and restore for Redis nodes
+- Replication groups for Redis
+- Full integration with VPC
+- Accessible from AWS Console, API or CLI
+**** Notes                                                            :notes:
+- Auto-discovery works by having an endpoint which is in charge of
+  registering nodes
+- Auto-discovery requires an additional client for this functionality.
+  Amazon supports Java and PHP by default.
+- Backups are made to s3. Backups can be done manually or automatic.
+  Snapshot mechanism can be used to migrate a Redis cache to ElastiCache
+- Redis replication - ability to replace primary within a group
 ** Key indicators for use                                             :slide:
+- Your app, db or caching target is on AWS
+- You want to use Redis or Memcached
+- Your cache needs are large enough to require a caching cluster i.e.
+ in the GB range
+*** Notes                                                             :notes:
+- Cache sizes go from standard small (1.3GB) to enhanced xxlarge (29GB)
 ** Key indicators against use                                         :slide:
+- Inverse of the indicators for use
+- Have differing opinions on Redis and security, backups or security
+- You want to use unsupported versions of Redis or Memcached
+*** Notes                                                             :notes:
+ElastiCache handles the above Redis topics for you so it's only a
+problem if your opinions differ.
 ** Fundamental tradeoffs                                              :slide:
-** What are some alternatives?                                        :slide:
+You get:
+- Managed: Provisioning, management and even patch updating are
+  automated
+- Compatible: Native access to Memached or Redis
+- Scalability: add and remove nodes with FewClicks™
+- Reliability: Automatic failure detection and recovery
+- Great integration with AWS: metrics, security, notifications
+** Fundamental tradeoffs (cont)                                       :slide:
+You give up:
+
+- Being anywhere but AWS
+- Fine grained control of node failure recovery
+- Fine-grained control of Redis backups, slaves of slaves in
+  replication groups and having more than 5 slaves in a replication group.
+- Preferred tooling for metrics and notifications around your caching
+  engine.
+- Unsupported versions of Redis or Memcached
+** Alternatives                                                       :slide:
+- [[http://redislabs.com/][RedisLabs]]
+  - Memcached and Redis services
+  - Scalability is defined by just memory size. No nodes,
+    clusters or engine-specific configuration.
+  - Different pricing tiers for more features i.e. replication, multiple
+    A-Z, backups
+  - Available on AWS, Azure, SoftLayer and GCE
+  - Backups and imports: any of the previous environments or to an ftp
+    server
+** Alternatives (cont)                                                :slide:
+- [[https://www.memcachier.com/][Memcachier]] - Memcached only. Similar to RedisLabs in simplicity.
+- Redis only
+  - [[http://redistogo.com/][Redis to Go]] - Limiting plans and features. Poor documentation.
+    Early Heroku addon
+  - [[http://www.redisgreen.net/][RedisGreen]] - Simple but with more features - provides dedicated
+    machines, hourly backups and metrics dashboard
+  - [[http://azure.microsoft.com/en-us/services/cache/][Microsoft Azure Redis Cache]] - Redis features somewhere between
+    RedisLabs and ElastiCache
+
+Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 ** Application characteristics                                        :slide:
-** Application characteristics (continued)                             :slide:
+- Environment: Hosted on AWS
+- Docs: Excellent like most AWS documentation
+- API quality:
+  - Well done for a non-trivial API.
+  - Each operation and its parameters [[http://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/Welcome.html][are documented]].
+  - API versioning done by release date.
+  - Standard SDKs: java, .NET, ruby, php, python
+- Dependencies: Redis or Memcached and AWS infrastructure i.e. EC2, S3, CloudWatch
+** Application characteristics (cont)                                 :slide:
+- Community: Not much but enough for production concerns
+  - [[https://forums.aws.amazon.com/forum.jspa?forumID=127][Support Forum]] - Actively monitored by Amazon employees
+  - Not much in the wild: few results on GitHub, presentations mainly
+    by Amazon.
+- Longevity
+  - Memcached since 2011 and Redis since 9/2013.
+  - Marked as Beta
+- Experience reports: TODO
 ** Operational characteristics                                        :slide:
 ** What does it cost?                                                 :slide:
+- Billing is per hour per node ($0.022 to $1.207).
+- Partial hours get rounded up.
+- Billing starts when node is in 'Available' state.
+- Reserved Cache Nodes
+  - Pay up front for 1 or 3 years.
+  - Three tiers - the more you pay upfront, the less you pay per hour.
+** What does it cost? (cont)                                          :slide:
+- Data transfer:
+  - No charge to EC2 within same AZ
+  - Charge on EC2 instance to another AZ. Charge is only EC2 instance
+    end.
+- Backup: Storage is $0.085/GB every month. Data transfer is no charge.
+- For more, see [[https://aws.amazon.com/elasticache/pricing/][pricing page]]
 * END
 
 #+OPTIONS: num:nil toc:nil tags:t H:4
