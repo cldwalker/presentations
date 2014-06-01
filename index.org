@@ -209,11 +209,11 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 ** Operational characteristics (cont)                                 :slide:
 - Elasticity
   - Adding and removing nodes is elastic - takes a few minutes
-  - Scaling up is not elastic
-    - Requires upgrading the /whole/ cluster
+  - Scaling up is not elastic - must upgrade /whole/ cluster
     - Requires new cluster setup i.e. configuring security
     - Requires restoring from a backup or recaching.
-  - None of this is automated
+  - Node failure detection and recovery is automated elasticity
+  - Scaling is not automated
 *** Notes
 - Takes a few minutes assuming you're configured correctly
 - Clients poll every minute for auto discovery
@@ -262,14 +262,54 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 - Backup: Storage is $0.085/GB every month. Data transfer is no charge.
 - For more, see [[https://aws.amazon.com/elasticache/pricing/][pricing
   page]]
-** In Use
-*** Handling failure modes
+* In Use
+** Handling failure modes
 - AZ fails - Prepare for this by having a read Redis replica in
   another AZ. Possible to do in Memcached but it's costly
-**** notes                                                            :notes:
+*** notes                                                             :notes:
 - Possible to handle AZ failure in Memcached but requires doings this
   in the app layer and increasing the number of writes to redundant nodes
 - 
+**
+* Summary
+** Questions                                                          :slide:
+- Is there auto scaling for ElastiCache?
+  - No but it's [[https://github.com/neevtechnologies/aws_elasticache_autoscale][possible with their API]]
+- How difficult is it to run and maintain a Redis Replication group?
+- What AWS services can use ElastiCache and which engine can they use? 
+  - Beanstalk, process in EC2, RDS and more
+- Are there overlapping use cases for the Redis engine and DynamoDB?
+*** Notes
+- Script works by adding and removing nodes based on average memory thresholds
+** Essential Resources                                                :slide:
+- [[http://aws.amazon.com/documentation/elasticache/][Documentation]] - User Guide, CLI and API
+- [[https://www.youtube.com/channel/UCd6MoB9NC6uYN2grvUNT-Zg][Presentations]]
+- [[http://www.slideshare.net/AmazonWebServices][Slides]]
+- [[http://aws.typepad.com/aws/amazon-elasticache/][AWS Blog]] - Posts tagged with ElastiCache
+- [[http://aws.amazon.com/elasticache/developer-resources/][More Resources]] - FAQ and Release Notes
+** What's next?                                                       :slide:
+- ElastiCache future looks bright
+  - Redis support released last September
+  - Major features like backup and restore were released end of April
+  - Eventual Redis 3 support?
+- Competitors
+  - Will RedisLabs become more ElastiCache or vice versa?
+  - Will Azure Redis keep up with ElastiCache?
+** Recommendations for/against use?                                   :slide:
+- If you're on AWS
+  - And need caching at the GB scale with Memcached or Redis
+  - And want the OPS handled for you
+  - Then Yes
+- Beware of unexpected limits, unavailable Redis features and know
+  your configuration
+** Final thoughts                                                     :slide:
+- What else should we know?
+  - I'm happy to answer questions afterwards.
+  - There's more to caching software than just Redis or Memcached.
+- What do you wish was different or better?
+  - Wish ElastiCache was easier to reason about, had less failure
+    modes and had automated elasticity
+  - Also wish for scaling up with no downtime
 * END
 
 #+OPTIONS: num:nil toc:nil tags:t H:4

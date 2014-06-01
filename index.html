@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>AWS Elasticache</title>
-<!-- 2014-06-01 Sun 15:22 -->
+<!-- 2014-06-01 Sun 17:24 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Gabriel Horner" />
@@ -559,17 +559,17 @@ since it's multi-threaded it should do better with larger nodes.
 <ul class="org-ul">
 <li>Adding and removing nodes is elastic - takes a few minutes
 </li>
-<li>Scaling up is not elastic
+<li>Scaling up is not elastic - must upgrade <i>whole</i> cluster
 <ul class="org-ul">
-<li>Requires upgrading the <i>whole</i> cluster
-</li>
 <li>Requires new cluster setup i.e. configuring security
 </li>
 <li>Requires restoring from a backup or recaching.
 </li>
 </ul>
 </li>
-<li>None of this is automated elasticity
+<li>Node failure detection and recovery is automated elasticity
+</li>
+<li>Scaling is not automated
 </li>
 </ul>
 </li>
@@ -718,42 +718,167 @@ page</a>
 </ul>
 </div>
 </div>
-<div id="outline-container-sec-2-22" class="outline-3">
-<h3 id="sec-2-22">In Use</h3>
-<div class="outline-text-3" id="text-2-22">
-</div><div id="outline-container-sec-2-22-1" class="outline-4">
-<h4 id="sec-2-22-1">Handling failure modes</h4>
-<div class="outline-text-4" id="text-2-22-1">
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3">In Use</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1">Handling failure modes</h3>
+<div class="outline-text-3" id="text-3-1">
 <ul class="org-ul">
 <li>AZ fails - Prepare for this by having a read Redis replica in
 another AZ. Possible to do in Memcached but it's costly
 </li>
 </ul>
 </div>
-<div id="outline-container-sec-2-22-1-1" class="outline-5">
-<h5 id="sec-2-22-1-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
-<div class="outline-text-5" id="text-2-22-1-1">
+<div id="outline-container-sec-3-1-1" class="outline-4">
+<h4 id="sec-3-1-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-3-1-1">
 <ul class="org-ul">
 <li>Possible to handle AZ failure in Memcached but requires doings this
 in the app layer and increasing the number of writes to redundant nodes
 </li>
 <li></li>
 </ul>
+<p>
+**
+</p>
 </div>
 </div>
 </div>
 </div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4">Summary</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-sec-4-1" class="outline-3">
+<h3 id="sec-4-1">Questions&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-4-1">
+<ul class="org-ul">
+<li>Is there auto scaling for ElastiCache?
+<ul class="org-ul">
+<li>No but it's <a href="https://github.com/neevtechnologies/aws_elasticache_autoscale">possible with their API</a>
+</li>
+</ul>
+</li>
+<li>How difficult is it to run and maintain a Redis Replication group?
+</li>
+<li>What AWS services can use ElastiCache and which engine can they use? 
+<ul class="org-ul">
+<li>Beanstalk, process in EC2, RDS and more
+</li>
+</ul>
+</li>
+<li>Are there overlapping use cases for the Redis engine and DynamoDB?
+</li>
+</ul>
 </div>
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3">END</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-sec-4-1-1" class="outline-4">
+<h4 id="sec-4-1-1">Notes</h4>
+<div class="outline-text-4" id="text-4-1-1">
+<ul class="org-ul">
+<li>Script works by adding and removing nodes based on average memory thresholds
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-4-2" class="outline-3">
+<h3 id="sec-4-2">Essential Resources&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-4-2">
+<ul class="org-ul">
+<li><a href="http://aws.amazon.com/documentation/elasticache/">Documentation</a> - User Guide, CLI and API
+</li>
+<li><a href="https://www.youtube.com/channel/UCd6MoB9NC6uYN2grvUNT-Zg">Presentations</a>
+</li>
+<li><a href="http://www.slideshare.net/AmazonWebServices">Slides</a>
+</li>
+<li><a href="http://aws.typepad.com/aws/amazon-elasticache/">AWS Blog</a> - Posts tagged with ElastiCache
+</li>
+<li><a href="http://aws.amazon.com/elasticache/developer-resources/">More Resources</a> - FAQ and Release Notes
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-4-3" class="outline-3">
+<h3 id="sec-4-3">What's next?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-4-3">
+<ul class="org-ul">
+<li>ElastiCache future looks bright
+<ul class="org-ul">
+<li>Redis support released last September
+</li>
+<li>Major features like backup and restore were released end of April
+</li>
+<li>Eventual Redis 3 support?
+</li>
+</ul>
+</li>
+<li>Competitors
+<ul class="org-ul">
+<li>Will RedisLabs become more ElastiCache or vice versa?
+</li>
+<li>Will Azure Redis keep up with ElastiCache?
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-4-4" class="outline-3">
+<h3 id="sec-4-4">Recommendations for/against use?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-4-4">
+<ul class="org-ul">
+<li>If you're on AWS
+<ul class="org-ul">
+<li>And need caching at the GB scale with Memcached or Redis
+</li>
+<li>And want the OPS handled for you
+</li>
+<li>Then Yes
+</li>
+</ul>
+</li>
+<li>Beware of unexpected limits, unavailable Redis features and know
+your configuration
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-4-5" class="outline-3">
+<h3 id="sec-4-5">Final thoughts&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-4-5">
+<ul class="org-ul">
+<li>What else should we know?
+<ul class="org-ul">
+<li>I'm happy to answer questions afterwards.
+</li>
+<li>There's more to caching software than just Redis or Memcached.
+</li>
+</ul>
+</li>
+<li>What do you wish was different or better?
+<ul class="org-ul">
+<li>Wish ElastiCache was easier to reason about, had less failure
+modes and had automated elasticity
+</li>
+<li>Also wish for scaling up with no downtime
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5">END</h2>
+<div class="outline-text-2" id="text-5">
 <script type="text/javascript" src="org-html-slideshow.js"></script>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Gabriel Horner</p>
-<p class="date">Created: 2014-06-01 Sun 15:22</p>
+<p class="date">Created: 2014-06-01 Sun 17:24</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.2.1 (<a href="http://orgmode.org">Org</a> mode 8.2.6)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
