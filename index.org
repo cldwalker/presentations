@@ -3,7 +3,7 @@
 #+EMAIL: gabriel@cognitect.com
 
 * AWS ElastiCache Briefing                                            :slide:
-* Choosing to use
+* Choosing to use                                                     :slide:
 ** What is it?                                                        :slide:
 - Amazon ElastiCache is a web service that provides an
   in-memory cache for your AWS application.
@@ -53,7 +53,7 @@ Theoretically yes - it's just a FewClicks™ caching but ...
 - There are a number of moving parts and even more operations
 - Different node types can impact throughput, latency.
 - Different configurations can impact reliability, durability, elasticity.
-- Grouping Redis and Memcached works until it doesn't.
+- Conceptually grouping Redis and Memcached works until it doesn't.
 
 So /NO/
 **** Notes                                                            :notes:
@@ -67,6 +67,7 @@ So /NO/
 ** Architectural overview
 *** Key components                                                    :slide:
 - engine: Redis or Memcached
+- TODO: add diagram
 - node: Smallest building block with its own DNS name and port
 - cluster: Group of nodes with the same engine type
 - cache parameter group: Group of parameters to be associated with a
@@ -198,7 +199,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 *** notes                                                             :notes:
 - mid-range nodes offer higher ECUs - EC2 Computing Units
 - Yes, I've only talked about Redis. Found no numbers on Memcached but
-  since it's multi-threaded it should do better with larger nodes.
+  since it's multi-threaded it should do better with larger nodeOBs.
 ** Operational characteristics (cont)                                 :slide:
 - Scalability
   - Writes scale out for Memcached - 20 node limit and then manually request
@@ -262,7 +263,50 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 - Backup: Storage is $0.085/GB every month. Data transfer is no charge.
 - For more, see [[https://aws.amazon.com/elasticache/pricing/][pricing
   page]]
-* In Use
+* In Use                                                              :slide:
+** What are the critical decisions?                                   :slide:
+- Which caching engine do I choose?
+- Which node type and how many should I choose?
+- How do I mitigate failure?
+- How do I handle upgrades?
+- How do I X?
+** Which caching engine do I choose?                                  :slide:
+- Memcached
+  - Pro: Multi-threaded
+  - Pro: Low complexity
+  - Pro: Wide adoption - some databases may only be memcached
+    compliant, easy to configure
+  - Con: Max value is 1MB
+  - Con: No persistence
+*** Notes                                                             :notes:
+- low complexity: just a key/val store, can know all commands quickly
+** Which caching engine do I choose? (cont)                           :slide:
+- Redis
+  - Pro: Powerful data types and commands to leverage them
+  - Pro: Max value is 512MB
+  - Pro: Persistence, Lua scripting, pub/sub and more
+  - Pro: Replication - allows for data across multiple AZs
+  - Cons: Single-threaded and more complex
+
+Recommendation: Use Memcached until you need a Redis data type or
+another feature i.e. multiple AZs.
+*** Notes                                                             :notes:
+- Data types: Sorted sets for time-series, hashes for sessions, lists
+** Which node type should I choose?                                   :slide:
+- Factor cost - per system characteristic if possible
+- Factor total memory
+  - Easy to scale out with Memcached.
+  - Must choose more accurately with Redis.
+- Factor throughput - More ECUs and cores on larger boxes
+- Factory latency - double check but most likely avoid micro and
+  small
+- Recommendation: It depends on the above
+*** Notes                                                             :notes:
+- cost - consider ops/$
+- throughput - be aware of Redis single-thread and largest boxes
+- Amazon suggests starting out small on Memcached and monitoring
+  memory, cpu and hit rate
+- mention connection overhead and reserved memory params TODO
 ** Handling failure modes
 - AZ fails - Prepare for this by having a read Redis replica in
   another AZ. Possible to do in Memcached but it's costly
@@ -271,7 +315,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
   in the app layer and increasing the number of writes to redundant nodes
 - 
 **
-* Summary
+* Summary                                                             :slide:
 ** Questions                                                          :slide:
 - Is there auto scaling for ElastiCache?
   - No but it's [[https://github.com/neevtechnologies/aws_elasticache_autoscale][possible with their API]]

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>AWS Elasticache</title>
-<!-- 2014-06-01 Sun 17:24 -->
+<!-- 2014-06-02 Mon 08:55 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Gabriel Horner" />
@@ -21,7 +21,7 @@
 <h2 id="sec-1">AWS ElastiCache Briefing&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h2>
 </div>
 <div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2">Choosing to use</h2>
+<h2 id="sec-2">Choosing to use&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h2>
 <div class="outline-text-2" id="text-2">
 </div><div id="outline-container-sec-2-1" class="outline-3">
 <h3 id="sec-2-1">What is it?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
@@ -141,7 +141,7 @@ Theoretically yes - it's just a FewClicks™ caching but &#x2026;
 </li>
 <li>Different configurations can impact reliability, durability, elasticity.
 </li>
-<li>Grouping Redis and Memcached works until it doesn't.
+<li>Conceptually grouping Redis and Memcached works until it doesn't.
 </li>
 </ul>
 
@@ -178,6 +178,8 @@ node limit per cluster
 <div class="outline-text-4" id="text-2-4-1">
 <ul class="org-ul">
 <li>engine: Redis or Memcached
+</li>
+<li>TODO: add diagram
 </li>
 <li>node: Smallest building block with its own DNS name and port
 </li>
@@ -524,7 +526,7 @@ instances you're mostly paying for more unused cores.
 <li>mid-range nodes offer higher ECUs - EC2 Computing Units
 </li>
 <li>Yes, I've only talked about Redis. Found no numbers on Memcached but
-since it's multi-threaded it should do better with larger nodes.
+since it's multi-threaded it should do better with larger nodeOBs.
 </li>
 </ul>
 </div>
@@ -720,20 +722,143 @@ page</a>
 </div>
 </div>
 <div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3">In Use</h2>
+<h2 id="sec-3">In Use&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h2>
 <div class="outline-text-2" id="text-3">
 </div><div id="outline-container-sec-3-1" class="outline-3">
-<h3 id="sec-3-1">Handling failure modes</h3>
+<h3 id="sec-3-1">What are the critical decisions?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-1">
+<ul class="org-ul">
+<li>Which caching engine do I choose?
+</li>
+<li>Which node type and how many should I choose?
+</li>
+<li>How do I mitigate failure?
+</li>
+<li>How do I handle upgrades?
+</li>
+<li>How do I X?
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2">Which caching engine do I choose?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-3-2">
+<ul class="org-ul">
+<li>Memcached
+<ul class="org-ul">
+<li>Pro: Multi-threaded
+</li>
+<li>Pro: Low complexity
+</li>
+<li>Pro: Wide adoption - some databases may only be memcached
+compliant, easy to configure
+</li>
+<li>Con: Max value is 1MB
+</li>
+<li>Con: No persistence
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-3-2-1" class="outline-4">
+<h4 id="sec-3-2-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-3-2-1">
+<ul class="org-ul">
+<li>low complexity: just a key/val store, can know all commands quickly
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3">Which caching engine do I choose? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-3-3">
+<ul class="org-ul">
+<li>Redis
+<ul class="org-ul">
+<li>Pro: Powerful data types and commands to leverage them
+</li>
+<li>Pro: Max value is 512MB
+</li>
+<li>Pro: Persistence, Lua scripting, pub/sub and more
+</li>
+<li>Pro: Replication - allows for data across multiple AZs
+</li>
+<li>Cons: Single-threaded and more complex
+</li>
+</ul>
+</li>
+</ul>
+
+<p>
+Recommendation: Use Memcached until you need a Redis data type or
+another feature i.e. multiple AZs.
+</p>
+</div>
+<div id="outline-container-sec-3-3-1" class="outline-4">
+<h4 id="sec-3-3-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-3-3-1">
+<ul class="org-ul">
+<li>Data types: Sorted sets for time-series, hashes for sessions, lists
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-4" class="outline-3">
+<h3 id="sec-3-4">Which node type should I choose?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-3-4">
+<ul class="org-ul">
+<li>Factor cost - per system characteristic if possible
+</li>
+<li>Factor total memory
+<ul class="org-ul">
+<li>Easy to scale out with Memcached.
+</li>
+<li>Must choose more accurately with Redis.
+</li>
+</ul>
+</li>
+<li>Factor throughput - More ECUs and cores on larger boxes
+</li>
+<li>Factory latency - double check but most likely avoid micro and
+small
+</li>
+<li>Recommendation: It depends on the above
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-3-4-1" class="outline-4">
+<h4 id="sec-3-4-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-3-4-1">
+<ul class="org-ul">
+<li>cost - consider ops/$
+</li>
+<li>throughput - be aware of Redis single-thread and largest boxes
+</li>
+<li>Amazon suggests starting out small on Memcached and monitoring
+memory, cpu and hit rate
+</li>
+<li>mention connection overhead and reserved memory params TODO
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-5" class="outline-3">
+<h3 id="sec-3-5">Handling failure modes</h3>
+<div class="outline-text-3" id="text-3-5">
 <ul class="org-ul">
 <li>AZ fails - Prepare for this by having a read Redis replica in
 another AZ. Possible to do in Memcached but it's costly
 </li>
 </ul>
 </div>
-<div id="outline-container-sec-3-1-1" class="outline-4">
-<h4 id="sec-3-1-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
-<div class="outline-text-4" id="text-3-1-1">
+<div id="outline-container-sec-3-5-1" class="outline-4">
+<h4 id="sec-3-5-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-3-5-1">
 <ul class="org-ul">
 <li>Possible to handle AZ failure in Memcached but requires doings this
 in the app layer and increasing the number of writes to redundant nodes
@@ -748,7 +873,7 @@ in the app layer and increasing the number of writes to redundant nodes
 </div>
 </div>
 <div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4">Summary</h2>
+<h2 id="sec-4">Summary&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h2>
 <div class="outline-text-2" id="text-4">
 </div><div id="outline-container-sec-4-1" class="outline-3">
 <h3 id="sec-4-1">Questions&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
@@ -878,7 +1003,7 @@ modes and had automated elasticity
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Gabriel Horner</p>
-<p class="date">Created: 2014-06-01 Sun 17:24</p>
+<p class="date">Created: 2014-06-02 Mon 08:55</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.2.1 (<a href="http://orgmode.org">Org</a> mode 8.2.6)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
