@@ -38,7 +38,7 @@
 ** Fundamental semantics
 *** What is it 'about'?                                              :slide:
 #+BEGIN_HTML
-<p style="text-align: center; font-size: 150%;">Caching!</p>
+<div style="text-align: center; font-size: 150%;">Caching!</div>
 #+END_HTML
 
 [[file:img/basic_elasticache_architecture.png]]
@@ -77,17 +77,22 @@ So /NO/
 ** Architectural overview
 *** Key components                                                    :slide:
 - engine: Redis or Memcached
-- TODO: add diagram
 - node: Smallest building block with its own DNS name and port
 - cluster: Group of nodes with the same engine type
+**** Notes                                                            :notes:
+- node runs an instance of memcached/redis
+- redis only has one node per cluster 
+*** Key components (cont)                                             :slide:
+[[file:img/cluster_diagrams.png]]
+*** Key components (cont)                                             :slide:
 - cache parameter group: Group of parameters to be associated with a
   cluster
 - cache security group: Controls network access to public cluster
 - cache subnet group: Controls network access to private cluster
-- Redis replication group: One primary/write cluster and up to five read clusters
-**** Notes                                                            :notes:
-- node runs an instance of memcached/redis
-- only one node per cluster 
+- Redis replication group: One primary/write cluster and up to five
+  read clusters
+*** Notes                                                             :notes:
+- Think of replication group as cluster group
 *** Key components (cont)                                             :slide:
 [[file:img/elasticache_components.png]]
 *** Key features/functions                                            :slide:
