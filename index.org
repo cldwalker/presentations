@@ -185,7 +185,17 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 - Longevity
   - Memcached since 2011 and Redis since 9/2013.
   - Marked as Beta
-- Experience reports: TODO
+** Application characteristics (cont)                                 :slide:
+- Experience reports
+  - [[http://aws.amazon.com/solutions/case-studies/placeiq/][PlaceIQ]]
+    - Used ElastiCache Memcached to cache requests to Nginx
+    - End-to-end response times improved 83% and resulted in net
+      savings
+  - [[http://aws.amazon.com/solutions/case-studies/health-guru/][Health Guru]]
+    - Used ElastiCache Memcached to cache partial pages, pages and
+      client-side widgets
+    - Team was able to implement a solution in less than a week, saves
+      the team 20 hours a week and resulted in 92% improvement in response times
 ** Operational characteristics                                        :slide:
 - Latency
   - Low latency to other Availability Zones (AZ) in the same region
