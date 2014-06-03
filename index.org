@@ -1,4 +1,4 @@
-#+TITLE: AWS Elasticache
+/GB#+TITLE: AWS Elasticache
 #+AUTHOR: Gabriel Horner
 #+EMAIL: gabriel@cognitect.com
 
@@ -266,10 +266,12 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 * In Use                                                              :slide:
 ** What are the critical decisions?                                   :slide:
 - Which caching engine do I choose?
-- Which node type and how many should I choose?
-- How do I mitigate failure?
+- Which node type should I choose?
+- How do I mitigate failure modes?
 - How do I handle upgrades?
-- How do I X?
+- What Cache Parameters should I be aware of?
+- How should I persist with Redis?
+- Which metrics should I monitor? - [[http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/CacheMetrics.WhichShouldIMonitor.html][See Docs]]
 ** Which caching engine do I choose?                                  :slide:
 - Memcached
   - Pro: Multi-threaded
@@ -300,21 +302,85 @@ another feature i.e. multiple AZs.
 - Factor throughput - More ECUs and cores on larger boxes
 - Factory latency - double check but most likely avoid micro and
   small
-- Recommendation: It depends on the above
+- Recommendation: Depends on above. Avoid micro on production
 *** Notes                                                             :notes:
 - cost - consider ops/$
+- memory ranges from .2GB to 68GB
 - throughput - be aware of Redis single-thread and largest boxes
 - Amazon suggests starting out small on Memcached and monitoring
   memory, cpu and hit rate
-- mention connection overhead and reserved memory params TODO
-** Handling failure modes
-- AZ fails - Prepare for this by having a read Redis replica in
-  another AZ. Possible to do in Memcached but it's costly
+- micro doesn't have AOF or snapshot or ...
+** How do I mitigate failure modes?                                   :slide:
+- AZ failure - Have nodes in multiple AZs.
+  - Only possible out of the box with Redis replication groups
+- Node failure - Keep your cache hit rate up
+  - Memcached
+    - Docs recommend being able to handle one or 2 nodes failing
+    - For example, for a 14GB requirement, better to have 2 7GB nodes
+      than one 14 GB
 *** notes                                                             :notes:
-- Possible to handle AZ failure in Memcached but requires doings this
-  in the app layer and increasing the number of writes to redundant nodes
-- 
-**
+- Possible to handle AZ failure in Memcached but requires doing this
+  in the app layer and increasing the number of writes to redundant
+  nodes
+** How do I mitigate failure modes? (cont)                            :slide:
+- Node failure (cont)
+  - Redis
+    - Use replication groups for minimal cache loss
+    - Manual or daily snapshots but with caveats
+- Node reboots
+    - Memcached: Nada
+    - Redis: Turn on Append-Only Files (AOF) for reboot failure
+*** Notes                                                             :notes:
+- snapshots can have a performance impact spawning child process which
+  can block parent for up to 10s
+- AOF works by replaying file on bootup which results in restored
+  cache
+- reboots need to happen for configs to set in
+** How do I handle upgrades?                                          :slide:
+- Auto upgrading patch versions are enabled by default.
+- Patch versions happen less than once a month and are announced ahead
+  of time.
+- Major or minor version updates require a new cluster.
+- Amazon reserves the right to patch security vulnerabilities.
+- Upgrades take place for an hour in a user-specified 8 hour range.
+** What Cache Parameters should I be aware of?                        :slide:
+- Memcached has over a dozen and Redis has 30+
+- Memcached - memcached_connections_overhead
+  - Total memory = Usable memory + Connection memory
+  - Default is 100 MB on non-micro instances
+  - Increase when observing swap usage and degraded performance
+  - Decrease if you want more memory to use
+** What Cache Parameters should I be aware of? (cont)                 :slide:
+- Redis
+  - reserved-memory
+    - Total memory = Usable memory + reserved memory
+    - Default is 0
+    - Consider increase if using replication, AOFs or snapshots
+  - appendonly: enables AOF
+  - appendfsync: Controls how often AOF writes to disk
+
+*** Notes                                                             :notes:
+If no memory for non-redis tasks, this can lead to memory paging
+** How should I persist with Redis?                                   :slide:
+- AOF
+  - Pro: Just a config switch away
+  - Pro: No financial cost
+  - Con: Guards against reboot and nothing else
+- Backups
+  - Pro: Daily automated snapshots
+  - Pro: Manual snapshots + API allow for custom intervals
+  - Con: Can have performance impact
+** How should I persist with Redis? (cont)                            :slide:
+- Backups (cont)
+  - Con: Costs to store data
+- Persistance Groups
+  - Pro: Read nodes are tightly in sync with primary
+  - Pro: Can scale reads out
+  - Pro: Can handle write failover with almost no cache loss
+  - Con: Incur cost of new nodes
+*** Notes                                                             :notes:
+Recommendation: Choose based on system needs and cost. All of em if
+you can
 * Summary                                                             :slide:
 ** Questions                                                          :slide:
 - Is there auto scaling for ElastiCache?
@@ -356,7 +422,7 @@ another feature i.e. multiple AZs.
   - Also wish for scaling up with no downtime
 * END
 
-#+OPTIONS: num:nil toc:nil tags:t H:4
+#+OPTIONS: num:nil toc:nil tags:t H:4 ^:nil
 
 #+TAGS: slide(s)
 

@@ -3,8 +3,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>AWS Elasticache</title>
-<!-- 2014-06-02 Mon 08:55 -->
+<title>index</title>
+<!-- 2014-06-03 Tue 01:33 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Gabriel Horner" />
@@ -15,7 +15,10 @@
 </head>
 <body>
 <div id="content">
-<h1 class="title">AWS Elasticache</h1>
+<h1 class="title">index</h1>
+<p>
+/GB#+TITLE: AWS Elasticache
+</p>
 
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1">AWS ElastiCache Briefing&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h2>
@@ -730,13 +733,17 @@ page</a>
 <ul class="org-ul">
 <li>Which caching engine do I choose?
 </li>
-<li>Which node type and how many should I choose?
+<li>Which node type should I choose?
 </li>
-<li>How do I mitigate failure?
+<li>How do I mitigate failure modes?
 </li>
 <li>How do I handle upgrades?
 </li>
-<li>How do I X?
+<li>What Cache Parameters should I be aware of?
+</li>
+<li>How should I persist with Redis?
+</li>
+<li>Which metrics should I monitor? - <a href="http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/CacheMetrics.WhichShouldIMonitor.html">See Docs</a>
 </li>
 </ul>
 </div>
@@ -826,7 +833,7 @@ another feature i.e. multiple AZs.
 <li>Factory latency - double check but most likely avoid micro and
 small
 </li>
-<li>Recommendation: It depends on the above
+<li>Recommendation: Depends on above. Avoid micro on production
 </li>
 </ul>
 </div>
@@ -836,23 +843,41 @@ small
 <ul class="org-ul">
 <li>cost - consider ops/$
 </li>
+<li>memory ranges from .2GB to 68GB
+</li>
 <li>throughput - be aware of Redis single-thread and largest boxes
 </li>
 <li>Amazon suggests starting out small on Memcached and monitoring
 memory, cpu and hit rate
 </li>
-<li>mention connection overhead and reserved memory params TODO
+<li>micro doesn't have AOF or snapshot or &#x2026;
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div id="outline-container-sec-3-5" class="outline-3">
-<h3 id="sec-3-5">Handling failure modes</h3>
+<h3 id="sec-3-5">How do I mitigate failure modes?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-5">
 <ul class="org-ul">
-<li>AZ fails - Prepare for this by having a read Redis replica in
-another AZ. Possible to do in Memcached but it's costly
+<li>AZ failure - Have nodes in multiple AZs.
+<ul class="org-ul">
+<li>Only possible out of the box with Redis replication groups
+</li>
+</ul>
+</li>
+<li>Node failure - Keep your cache hit rate up
+<ul class="org-ul">
+<li>Memcached
+<ul class="org-ul">
+<li>Docs recommend being able to handle one or 2 nodes failing
+</li>
+<li>For example, for a 14GB requirement, better to have 2 7GB nodes
+than one 14 GB
+</li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 </div>
@@ -860,13 +885,186 @@ another AZ. Possible to do in Memcached but it's costly
 <h4 id="sec-3-5-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
 <div class="outline-text-4" id="text-3-5-1">
 <ul class="org-ul">
-<li>Possible to handle AZ failure in Memcached but requires doings this
-in the app layer and increasing the number of writes to redundant nodes
+<li>Possible to handle AZ failure in Memcached but requires doing this
+in the app layer and increasing the number of writes to redundant
+nodes
 </li>
-<li></li>
 </ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-6" class="outline-3">
+<h3 id="sec-3-6">How do I mitigate failure modes? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-3-6">
+<ul class="org-ul">
+<li>Node failure (cont)
+<ul class="org-ul">
+<li>Redis
+<ul class="org-ul">
+<li>Use replication groups for minimal cache loss
+</li>
+<li>Manual or daily snapshots but with caveats
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Node reboots
+<ul class="org-ul">
+<li>Memcached: Nada
+</li>
+<li>Redis: Turn on Append-Only Files (AOF) for reboot failure
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-3-6-1" class="outline-4">
+<h4 id="sec-3-6-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-3-6-1">
+<ul class="org-ul">
+<li>snapshots can have a performance impact spawning child process which
+can block parent for up to 10s
+</li>
+<li>AOF works by replaying file on bootup which results in restored
+cache
+</li>
+<li>reboots need to happen for configs to set in
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-7" class="outline-3">
+<h3 id="sec-3-7">How do I handle upgrades?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-3-7">
+<ul class="org-ul">
+<li>Auto upgrading patch versions are enabled by default.
+</li>
+<li>Patch versions happen less than once a month and are announced ahead
+of time.
+</li>
+<li>Major or minor version updates require a new cluster.
+</li>
+<li>Amazon reserves the right to patch security vulnerabilities.
+</li>
+<li>Upgrades take place for an hour in a user-specified 8 hour range.
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-3-8" class="outline-3">
+<h3 id="sec-3-8">What Cache Parameters should I be aware of?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-3-8">
+<ul class="org-ul">
+<li>Memcached has over a dozen and Redis has 30+
+</li>
+<li>Memcached - memcached_connections_overhead
+<ul class="org-ul">
+<li>Total memory = Usable memory + Connection memory
+</li>
+<li>Default is 100 MB on non-micro instances
+</li>
+<li>Increase when observing swap usage and degraded performance
+</li>
+<li>Decrease if you want more memory to use
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-3-9" class="outline-3">
+<h3 id="sec-3-9">What Cache Parameters should I be aware of? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-3-9">
+<ul class="org-ul">
+<li>Redis
+<ul class="org-ul">
+<li>reserved-memory
+<ul class="org-ul">
+<li>Total memory = Usable memory + reserved memory
+</li>
+<li>Default is 0
+</li>
+<li>Consider increase if using replication, AOFs or snapshots
+</li>
+</ul>
+</li>
+<li>appendonly: enables AOF
+</li>
+<li>appendfsync: Controls how often AOF writes to disk
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-sec-3-9-1" class="outline-4">
+<h4 id="sec-3-9-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-3-9-1">
 <p>
-**
+If no memory for non-redis tasks, this can lead to memory paging
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-10" class="outline-3">
+<h3 id="sec-3-10">How should I persist with Redis?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-3-10">
+<ul class="org-ul">
+<li>AOF
+<ul class="org-ul">
+<li>Pro: Just a config switch away
+</li>
+<li>Pro: No financial cost
+</li>
+<li>Con: Guards against reboot and nothing else
+</li>
+</ul>
+</li>
+<li>Backups
+<ul class="org-ul">
+<li>Pro: Daily automated snapshots
+</li>
+<li>Pro: Manual snapshots + API allow for custom intervals
+</li>
+<li>Con: Can have performance impact
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-3-11" class="outline-3">
+<h3 id="sec-3-11">How should I persist with Redis? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
+<div class="outline-text-3" id="text-3-11">
+<ul class="org-ul">
+<li>Backups (cont)
+<ul class="org-ul">
+<li>Con: Costs to store data
+</li>
+</ul>
+</li>
+<li>Persistance Groups
+<ul class="org-ul">
+<li>Pro: Read nodes are tightly in sync with primary
+</li>
+<li>Pro: Can scale reads out
+</li>
+<li>Pro: Can handle write failover with almost no cache loss
+</li>
+<li>Con: Incur cost of new nodes
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div id="outline-container-sec-3-11-1" class="outline-4">
+<h4 id="sec-3-11-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-3-11-1">
+<p>
+Recommendation: Choose based on system needs and cost. All of em if
+you can
 </p>
 </div>
 </div>
@@ -1003,7 +1201,7 @@ modes and had automated elasticity
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Gabriel Horner</p>
-<p class="date">Created: 2014-06-02 Mon 08:55</p>
+<p class="date">Created: 2014-06-03 Tue 01:33</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.2.1 (<a href="http://orgmode.org">Org</a> mode 8.2.6)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
