@@ -1,4 +1,4 @@
-/GB#+TITLE: AWS Elasticache
+#+TITLE: AWS Elasticache
 #+AUTHOR: Gabriel Horner
 #+EMAIL: gabriel@cognitect.com
 
@@ -37,10 +37,20 @@
   automatically take its place.
 ** Fundamental semantics
 *** What is it 'about'?                                              :slide:
-ElastiCache aims to be an easy way of adding a reliable, scalable and
-managed caching layer to your AWS app.
-TODO - preface with slideshare diagram
-*** What are the primary operations?                                   :slide:
+#+BEGIN_HTML
+<p style="text-align: center; font-size: 150%;">Caching!</p>
+#+END_HTML
+
+[[file:img/basic_elasticache_architecture.png]]
+*** What is it 'about'? (cont)                                        :slide:
+ElastiCache aims to reduce read load on your database, web server, or
+anything that can benefit from caching.
+
+It's about setting up and operating a cache cluster in the cloud with
+minimal effort.
+
+It's about observing how your cache is performing to improve it.
+*** What are the primary operations?                                  :slide:
 - Create, edit, reboot and delete cache clusters
 - Create, edit, promote and delete Redis replication groups
 - Create, edit, list and reset cache parameter groups
