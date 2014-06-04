@@ -17,6 +17,7 @@
   so applications that already use another existing Memcached or Redis
   environment can work seamlessly with this service
 ** What problems does ElastiCache strive to solve?                    :slide:
+TODO
 - Problem 1: Building a caching cluster requires
   provisioning a server, installing caching software and knowledge of
   how to setup a cluster.
@@ -57,16 +58,18 @@ It's about observing how your cache is performing to improve it.
 - Create, edit, assign/authorize and delete cache security groups and subnet groups
 - Create, show, copy, delete and restore Redis snapshots
 **** Notes                                                            :notes:
+Don't read or explain em all
 There's 34 actions in all
 *** Is it simple?                                                    :slide:
 Theoretically yes - it's just a FewClicks™ caching but ...
-- There are a number of moving parts and even more operations
 - Different node types can impact throughput, latency.
 - Different configurations can impact reliability, durability, elasticity.
 - Conceptually grouping Redis and Memcached works until it doesn't.
 
 So /NO/
 **** Notes                                                            :notes:
+TODO
+- many actions
 - configuration, node types and redis/memcached disconnect can make it hard to reason about
 - redis and memcached have different concepts and features
 - redis has replication and backup. memcached has auto-discovery.
@@ -100,15 +103,17 @@ So /NO/
 - Detailed monitoring statistics of nodes via Cloudwatch
 - Failed nodes are automatically detected and replaced
 - Auto discovery of Memcached nodes
-- Backup and restore including automated daily snapshots
-- Replication groups for Redis
-- Full integration with VPC
-- Accessible from AWS Console, API or CLI
 **** Notes                                                            :notes:
 - Auto-discovery works by having an endpoint which is in charge of
   registering nodes
 - Auto-discovery requires an additional client for this functionality.
   Amazon supports Java and PHP by default.
+*** Key features/functions (cont)                                     :slide:
+- Backup and restore including automated daily snapshots
+- Replication groups for Redis
+- Full integration with VPC
+- Accessible from AWS Console, API or CLI
+**** Notes                                                            :notes:
 - Backups are made to s3. Backups can be done manually or automatic.
   Snapshot mechanism can be used to migrate a Redis cache to ElastiCache
 - Redis replication - ability to replace primary within a group
@@ -122,7 +127,7 @@ So /NO/
 - Cache sizes go from standard small (1.3GB) to enhanced xxlarge (29GB)
 ** Key indicators against use                                         :slide:
 - Inverse of the indicators for use
-- Have differing opinions on Redis and security, backups or security
+- Have differing opinions on Redis and backups or security
 - You want to use unsupported versions of Redis or Memcached
 *** Notes                                                             :notes:
 ElastiCache handles the above Redis topics for you so it's only a
@@ -183,10 +188,18 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
   - Not much in the wild: few results on GitHub, presentations mainly
     by Amazon.
 - Longevity
-  - Memcached since 2011 and Redis since 9/2013.
+  - Started with Memcached in 2011 and Redis since 9/2013.
   - Marked as Beta
 ** Application characteristics (cont)                                 :slide:
 - Experience reports
+  - [[http://aws.amazon.com/solutions/case-studies/placeiq/][PlaceIQ]]
+    - Used ElastiCache Memcached to cache requests to Nginx
+    - End-to-end response times improved 83% and resulted in net
+      savings
+  - [[http://aws.amazon.com/solutions/case-studies/health-guru/][Health Guru]]
+    - Used ElastiCache Memcached to cache partial pages, pages and
+      client-side widgets
+*** Notes                                                             :notes:
   - [[http://aws.amazon.com/solutions/case-studies/placeiq/][PlaceIQ]]
     - Used ElastiCache Memcached to cache requests to Nginx
     - End-to-end response times improved 83% and resulted in net
@@ -231,7 +244,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
   - Writes do not scale out for Redis - one node limit per cluster
   - Reads scale out only for Redis - 5 node limit per cluster
   - Both write and read nodes scale up but require new clusters
-  - [[http://redislabs.com/blog/the-endless-redis-replication-loop-what-why-and-how-to-solve-it][There may be demons]] with Redis replication, Redis 2.6.X and > 25GB 
+  - [[http://redislabs.com/blog/the-endless-redis-replication-loop-what-why-and-how-to-solve-it][There may be demons]] with scaling up Redis replication, Redis 2.6.X and > 25GB
 ** Operational characteristics (cont)                                 :slide:
 - Elasticity
   - Adding and removing nodes is elastic - takes a few minutes
@@ -257,6 +270,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 - "Currently, all clients to an ElastiCache Cluster must be within the
   Amazon EC2 network" - You can always hope
 ** Operational characteristics (cont)                                 :slide:
+TODO
 - Security
   - Supports private clusters within a Virtual Private Cloud (VPC). This requires:
     - A VPC with at least one subnet
@@ -275,28 +289,29 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 - Could explain how cache node failures work
 ** What does it cost?                                                 :slide:
 - Billing is per hour per node ($0.022 to $1.207).
-- Partial hours get rounded up.
-- Billing starts when node is in 'Available' state.
 - Reserved Cache Nodes
   - Pay up front for 1 or 3 years.
   - Three tiers - the more you pay upfront, the less you pay per hour.
-** What does it cost? (cont)                                          :slide:
-- Data transfer:
-  - No charge to EC2 within same AZ
-  - Charge on EC2 instance to another AZ. Charge is only EC2 instance
-    end.
+- Data transfer: Only charge is on EC2 instance to another AZ - /only/
+  on the EC2 end.
 - Backup: Storage is $0.085/GB every month. Data transfer is no charge.
-- For more, see [[https://aws.amazon.com/elasticache/pricing/][pricing
-  page]]
+- For more, see [[https://aws.amazon.com/elasticache/pricing/][pricing page]]
+*** Notes                                                             :notes:
+- Partial hours get rounded up.
+- Billing starts when node is in 'Available' state.
+
 * In Use                                                              :slide:
 ** What are the critical decisions?                                   :slide:
 - Which caching engine do I choose?
 - Which node type should I choose?
 - How do I mitigate failure modes?
-- How do I handle upgrades?
+- How do I handle upgrades? - [[http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/VersionManagement.html][See Docs]]
 - What Cache Parameters should I be aware of?
 - How should I persist with Redis?
 - Which metrics should I monitor? - [[http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/CacheMetrics.WhichShouldIMonitor.html][See Docs]]
+*** Notes                                                             :notes:
+- How do I handle upgrades? Auto upgrading patch versions are enabled
+  by default. See Docs for more
 ** Which caching engine do I choose?                                  :slide:
 - Memcached
   - Pro: Multi-threaded
@@ -361,13 +376,6 @@ another feature i.e. multiple AZs.
 - AOF works by replaying file on bootup which results in restored
   cache
 - reboots need to happen for configs to set in
-** How do I handle upgrades?                                          :slide:
-- Auto upgrading patch versions are enabled by default.
-- Patch versions happen less than once a month and are announced ahead
-  of time.
-- Major or minor version updates require a new cluster.
-- Amazon reserves the right to patch security vulnerabilities.
-- Upgrades take place for an hour in a user-specified 8 hour range.
 ** What Cache Parameters should I be aware of?                        :slide:
 - Memcached has over a dozen and Redis has 30+
 - Memcached - memcached_connections_overhead
