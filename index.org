@@ -91,7 +91,7 @@ So /NO/
 - cache subnet group: Controls network access to private cluster
 - Redis replication group: One primary/write cluster and up to five
   read clusters
-*** Notes                                                             :notes:
+**** Notes                                                            :notes:
 - Think of replication group as cluster group
 *** Key components (cont)                                             :slide:
 [[file:img/elasticache_components.png]]
@@ -240,7 +240,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
     - Requires restoring from a backup or recaching.
   - Node failure detection and recovery is automated elasticity
   - Scaling is not automated
-*** Notes
+*** Notes                                                             :notes:
 - Takes a few minutes assuming you're configured correctly
 - Clients poll every minute for auto discovery
 ** Operational characteristics (cont)                                 :slide:
@@ -414,7 +414,7 @@ you can
 - What AWS services can use ElastiCache and which engine can they use? 
   - Beanstalk, process in EC2, RDS and more
 - Are there overlapping use cases for the Redis engine and DynamoDB?
-*** Notes
+*** Notes                                                             :notes:
 - Script works by adding and removing nodes based on average memory thresholds
 ** Essential Resources                                                :slide:
 - [[http://aws.amazon.com/documentation/elasticache/][Documentation]] - User Guide, CLI and API

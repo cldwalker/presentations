@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>AWS Elasticache</title>
-<!-- 2014-06-03 Tue 18:57 -->
+<!-- 2014-06-03 Tue 22:35 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Gabriel Horner" />
@@ -50,7 +50,6 @@ environment can work seamlessly with this service
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2">What problems does ElastiCache strive to solve?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-2">
@@ -91,7 +90,6 @@ automatically take its place.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-3" class="outline-3">
 <h3 id="sec-2-3">Fundamental semantics</h3>
 <div class="outline-text-3" id="text-2-3">
@@ -107,7 +105,6 @@ automatically take its place.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-3-2" class="outline-4">
 <h4 id="sec-2-3-2">What is it 'about'? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-3-2">
@@ -126,7 +123,6 @@ It's about observing how your cache is performing to improve it.
 </p>
 </div>
 </div>
-
 <div id="outline-container-sec-2-3-3" class="outline-4">
 <h4 id="sec-2-3-3">What are the primary operations?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-3-3">
@@ -152,7 +148,6 @@ There's 34 actions in all
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-3-4" class="outline-4">
 <h4 id="sec-2-3-4">Is it simple?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-3-4">
@@ -195,7 +190,6 @@ node limit per cluster
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-4" class="outline-3">
 <h3 id="sec-2-4">Architectural overview</h3>
 <div class="outline-text-3" id="text-2-4">
@@ -223,7 +217,6 @@ node limit per cluster
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-4-2" class="outline-4">
 <h4 id="sec-2-4-2">Key components (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-4-2">
@@ -234,7 +227,6 @@ node limit per cluster
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-4-3" class="outline-4">
 <h4 id="sec-2-4-3">Key components (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-4-3">
@@ -251,21 +243,19 @@ read clusters
 </li>
 </ul>
 </div>
-</div>
-
-<div id="outline-container-sec-2-4-4" class="outline-4">
-<h4 id="sec-2-4-4">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
-<div class="outline-text-4" id="text-2-4-4">
+<div id="outline-container-sec-2-4-3-1" class="outline-5">
+<h5 id="sec-2-4-3-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
+<div class="outline-text-5" id="text-2-4-3-1">
 <ul class="org-ul">
 <li>Think of replication group as cluster group
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-sec-2-4-5" class="outline-4">
-<h4 id="sec-2-4-5">Key components (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
-<div class="outline-text-4" id="text-2-4-5">
+</div>
+<div id="outline-container-sec-2-4-4" class="outline-4">
+<h4 id="sec-2-4-4">Key components (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
+<div class="outline-text-4" id="text-2-4-4">
 
 <div class="figure">
 <p><img src="img/elasticache_components.png" alt="elasticache_components.png" />
@@ -273,10 +263,9 @@ read clusters
 </div>
 </div>
 </div>
-
-<div id="outline-container-sec-2-4-6" class="outline-4">
-<h4 id="sec-2-4-6">Key features/functions&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
-<div class="outline-text-4" id="text-2-4-6">
+<div id="outline-container-sec-2-4-5" class="outline-4">
+<h4 id="sec-2-4-5">Key features/functions&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
+<div class="outline-text-4" id="text-2-4-5">
 <ul class="org-ul">
 <li>Provision and operation of clusters of Memcached/Redis nodes
 </li>
@@ -296,9 +285,9 @@ read clusters
 </li>
 </ul>
 </div>
-<div id="outline-container-sec-2-4-6-1" class="outline-5">
-<h5 id="sec-2-4-6-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
-<div class="outline-text-5" id="text-2-4-6-1">
+<div id="outline-container-sec-2-4-5-1" class="outline-5">
+<h5 id="sec-2-4-5-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
+<div class="outline-text-5" id="text-2-4-5-1">
 <ul class="org-ul">
 <li>Auto-discovery works by having an endpoint which is in charge of
 registering nodes
@@ -318,7 +307,6 @@ Snapshot mechanism can be used to migrate a Redis cache to ElastiCache
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-5" class="outline-3">
 <h3 id="sec-2-5">Key indicators for use&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-5">
@@ -342,7 +330,6 @@ in the GB range
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-6" class="outline-3">
 <h3 id="sec-2-6">Key indicators against use&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-6">
@@ -365,7 +352,6 @@ problem if your opinions differ.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-7" class="outline-3">
 <h3 id="sec-2-7">Fundamental tradeoffs&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-7">
@@ -387,7 +373,6 @@ automated
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-2-8" class="outline-3">
 <h3 id="sec-2-8">Fundamental tradeoffs (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-8">
@@ -414,7 +399,6 @@ engine.
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-2-9" class="outline-3">
 <h3 id="sec-2-9">Alternatives&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-9">
@@ -439,7 +423,6 @@ server
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-2-10" class="outline-3">
 <h3 id="sec-2-10">Alternatives (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-10">
@@ -466,7 +449,6 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 </p>
 </div>
 </div>
-
 <div id="outline-container-sec-2-11" class="outline-3">
 <h3 id="sec-2-11">Application characteristics&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-11">
@@ -492,7 +474,6 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-2-12" class="outline-3">
 <h3 id="sec-2-12">Application characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-12">
@@ -517,7 +498,6 @@ by Amazon.
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-2-13" class="outline-3">
 <h3 id="sec-2-13">Application characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-13">
@@ -548,7 +528,6 @@ the team 20 hours a week and resulted in 92% improvement in response times
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-2-14" class="outline-3">
 <h3 id="sec-2-14">Operational characteristics&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-14">
@@ -593,7 +572,6 @@ commands to run.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-15" class="outline-3">
 <h3 id="sec-2-15">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-15">
@@ -627,7 +605,6 @@ since it's multi-threaded it should do better with larger nodeOBs.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-16" class="outline-3">
 <h3 id="sec-2-16">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-16">
@@ -649,7 +626,6 @@ since it's multi-threaded it should do better with larger nodeOBs.
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-2-17" class="outline-3">
 <h3 id="sec-2-17">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-17">
@@ -675,7 +651,7 @@ since it's multi-threaded it should do better with larger nodeOBs.
 </ul>
 </div>
 <div id="outline-container-sec-2-17-1" class="outline-4">
-<h4 id="sec-2-17-1">Notes</h4>
+<h4 id="sec-2-17-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
 <div class="outline-text-4" id="text-2-17-1">
 <ul class="org-ul">
 <li>Takes a few minutes assuming you're configured correctly
@@ -686,7 +662,6 @@ since it's multi-threaded it should do better with larger nodeOBs.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-18" class="outline-3">
 <h3 id="sec-2-18">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-18">
@@ -723,7 +698,6 @@ Amazon EC2 network" - You can always hope
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-19" class="outline-3">
 <h3 id="sec-2-19">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-19">
@@ -746,7 +720,6 @@ IPS needed for cache node replacement
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-2-20" class="outline-3">
 <h3 id="sec-2-20">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-20">
@@ -778,7 +751,6 @@ primary fails to heal, manually promote a read
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-21" class="outline-3">
 <h3 id="sec-2-21">What does it cost?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-21">
@@ -800,7 +772,6 @@ primary fails to heal, manually promote a read
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-2-22" class="outline-3">
 <h3 id="sec-2-22">What does it cost? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-22">
@@ -823,7 +794,6 @@ page</a>
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3">In Use&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h2>
 <div class="outline-text-2" id="text-3">
@@ -848,7 +818,6 @@ page</a>
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-3-2" class="outline-3">
 <h3 id="sec-3-2">Which caching engine do I choose?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-2">
@@ -880,7 +849,6 @@ compliant, easy to configure
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-3-3" class="outline-3">
 <h3 id="sec-3-3">Which caching engine do I choose? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-3">
@@ -916,7 +884,6 @@ another feature i.e. multiple AZs.
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-3-4" class="outline-3">
 <h3 id="sec-3-4">Which node type should I choose?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-4">
@@ -959,7 +926,6 @@ memory, cpu and hit rate
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-3-5" class="outline-3">
 <h3 id="sec-3-5">How do I mitigate failure modes?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-5">
@@ -997,7 +963,6 @@ nodes
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-3-6" class="outline-3">
 <h3 id="sec-3-6">How do I mitigate failure modes? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-6">
@@ -1040,7 +1005,6 @@ cache
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-3-7" class="outline-3">
 <h3 id="sec-3-7">How do I handle upgrades?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-7">
@@ -1059,7 +1023,6 @@ of time.
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-3-8" class="outline-3">
 <h3 id="sec-3-8">What Cache Parameters should I be aware of?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-8">
@@ -1081,7 +1044,6 @@ of time.
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-3-9" class="outline-3">
 <h3 id="sec-3-9">What Cache Parameters should I be aware of? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-9">
@@ -1116,7 +1078,6 @@ If no memory for non-redis tasks, this can lead to memory paging
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-3-10" class="outline-3">
 <h3 id="sec-3-10">How should I persist with Redis?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-10">
@@ -1144,7 +1105,6 @@ If no memory for non-redis tasks, this can lead to memory paging
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-3-11" class="outline-3">
 <h3 id="sec-3-11">How should I persist with Redis? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-11">
@@ -1180,7 +1140,6 @@ you can
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4">Summary&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h2>
 <div class="outline-text-2" id="text-4">
@@ -1207,7 +1166,7 @@ you can
 </ul>
 </div>
 <div id="outline-container-sec-4-1-1" class="outline-4">
-<h4 id="sec-4-1-1">Notes</h4>
+<h4 id="sec-4-1-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
 <div class="outline-text-4" id="text-4-1-1">
 <ul class="org-ul">
 <li>Script works by adding and removing nodes based on average memory thresholds
@@ -1216,7 +1175,6 @@ you can
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-4-2" class="outline-3">
 <h3 id="sec-4-2">Essential Resources&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-4-2">
@@ -1234,7 +1192,6 @@ you can
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-4-3" class="outline-3">
 <h3 id="sec-4-3">What's next?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-4-3">
@@ -1260,7 +1217,6 @@ you can
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-4-4" class="outline-3">
 <h3 id="sec-4-4">Recommendations for/against use?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-4-4">
@@ -1281,7 +1237,6 @@ your configuration
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-4-5" class="outline-3">
 <h3 id="sec-4-5">Final thoughts&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-4-5">
@@ -1307,7 +1262,6 @@ modes and had automated elasticity
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-5" class="outline-2">
 <h2 id="sec-5">END</h2>
 <div class="outline-text-2" id="text-5">
@@ -1317,8 +1271,8 @@ modes and had automated elasticity
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Gabriel Horner</p>
-<p class="date">Created: 2014-06-03 Tue 18:57</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
+<p class="date">Created: 2014-06-03 Tue 22:35</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.2.1 (<a href="http://orgmode.org">Org</a> mode 8.2.6)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
