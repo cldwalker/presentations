@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>AWS Elasticache</title>
-<!-- 2014-06-05 Thu 02:26 -->
+<!-- 2014-06-05 Thu 19:46 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Gabriel Horner" />
@@ -57,6 +57,7 @@ existing Memcached or Redis environment can work seamlessly with this service
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-2" class="outline-3">
 <h3 id="sec-2-2">What problems does ElastiCache strive to solve?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-2">
@@ -101,6 +102,7 @@ lose a node and have one automatically spawn up to replace it.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-3" class="outline-3">
 <h3 id="sec-2-3">Fundamental semantics</h3>
 <div class="outline-text-3" id="text-2-3">
@@ -116,6 +118,7 @@ lose a node and have one automatically spawn up to replace it.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-3-2" class="outline-4">
 <h4 id="sec-2-3-2">What is it 'about'? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-3-2">
@@ -135,6 +138,7 @@ It's about observing how your cache is performing to improve it.
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-3-3" class="outline-4">
 <h4 id="sec-2-3-3">What are the primary operations?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-3-3">
@@ -167,6 +171,7 @@ task at hand.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-3-4" class="outline-4">
 <h4 id="sec-2-3-4">Is it simple?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-3-4">
@@ -222,7 +227,6 @@ SO NO
 </div>
 </div>
 </div>
-
 <div id="outline-container-sec-2-4" class="outline-3">
 <h3 id="sec-2-4">Architectural overview</h3>
 <div class="outline-text-3" id="text-2-4">
@@ -250,22 +254,44 @@ SO NO
 <li>node: Smallest building block with its own DNS name and port. It
 runs an instance of memcached/redis
 </li>
-<li>cluster: Group of nodes with the same engine type. Note, Redis is
-only allowed one node per cluster.
+<li>cluster: Group of nodes with the same engine type. Note, Redis can
+only have one node per cluster
 </li>
 </ul>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-4-2" class="outline-4">
 <h4 id="sec-2-4-2">Key components (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-4-2">
-<p>
-TODO: slit up
-<img src="img/cluster_diagrams.png" alt="cluster_diagrams.png" />
+
+<div class="figure">
+<p><img src="img/cluster_diagrams.png" alt="cluster_diagrams.png" />
 </p>
 </div>
 </div>
+<div id="outline-container-sec-2-4-2-1" class="outline-5">
+<h5 id="sec-2-4-2-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
+<div class="outline-text-5" id="text-2-4-2-1">
+<p>
+<b>REPLACE</b>
+</p>
+<ul class="org-ul">
+<li>I thought these diagrams would be helpful to show at a glance the
+difference between a Memcached and Redis cluster. Note that these
+aren't reflective of how they are layed out in AWS.
+For Memcached, you can see it's a flat cluster where every node can
+be equally written to, which is great for write scalability but not
+read scalability. For Redis, the master is the writeable node and
+the rest are read nodes. Note that Redis has the inverse problem of Memcached,
+great for read scalability but not so much for write scalability.
+</li>
+</ul>
+</div>
+</div>
+</div>
+
 <div id="outline-container-sec-2-4-3" class="outline-4">
 <h4 id="sec-2-4-3">Key components (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-4-3">
@@ -295,6 +321,7 @@ read clusters
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-4-4" class="outline-4">
 <h4 id="sec-2-4-4">Key components (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-4-4">
@@ -305,13 +332,14 @@ read clusters
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-4-5" class="outline-4">
 <h4 id="sec-2-4-5">Key features/functions&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-4-5">
 <ul class="org-ul">
 <li>Provision and operation of clusters of Memcached/Redis nodes
 </li>
-<li>Detailed monitoring statistics of nodes via Cloudwatch
+<li>Detailed monitoring of nodes via CloudWatch
 </li>
 <li>Failed nodes are automatically detected and replaced
 </li>
@@ -322,26 +350,28 @@ read clusters
 <div id="outline-container-sec-2-4-5-1" class="outline-5">
 <h5 id="sec-2-4-5-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
 <div class="outline-text-5" id="text-2-4-5-1">
+<p>
+<b>ADD</b>
+</p>
 <ul class="org-ul">
 <li>Auto-discovery works by having an endpoint which is in charge of
-registering nodes
-</li>
-<li>Auto-discovery requires an additional client for this functionality.
+registering nodes. Using it does require an additional client.
 Amazon supports Java and PHP by default.
 </li>
 </ul>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-4-6" class="outline-4">
 <h4 id="sec-2-4-6">Key features/functions (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-4-6">
 <ul class="org-ul">
-<li>Backup and restore including automated daily snapshots
+<li>Full integration with Virtual Private Cloud (VPC)
+</li>
+<li>Backup and restore for Redis
 </li>
 <li>Replication groups for Redis
-</li>
-<li>Full integration with VPC
 </li>
 <li>Accessible from AWS Console, API or CLI
 </li>
@@ -350,19 +380,26 @@ Amazon supports Java and PHP by default.
 <div id="outline-container-sec-2-4-6-1" class="outline-5">
 <h5 id="sec-2-4-6-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
 <div class="outline-text-5" id="text-2-4-6-1">
+<p>
+<b>REPLACE</b>
+</p>
 <ul class="org-ul">
-<li>Backups are made to s3. Backups can be done manually or automatic.
-Snapshot mechanism can be used to migrate a Redis cache to ElastiCache
+<li>Full integration with Virtual Private Cloud (VPC)
 </li>
-<li>Redis replication - ability to replace primary within a group
+<li>Backup and restore for Redis. Backups live on S3. Restore can also
+be used to import an external Redis cache.
 </li>
-<li>Redis replication group has no client and requires using API
+<li>Replication groups for Redis. This offers durability and read
+scalability. We'll talk more about it later.
+</li>
+<li>Accessible from AWS Console, API or CLI
 </li>
 </ul>
 </div>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-5" class="outline-3">
 <h3 id="sec-2-5">Key indicators for use&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-5">
@@ -376,25 +413,17 @@ in the GB range
 </li>
 </ul>
 </div>
-<div id="outline-container-sec-2-5-1" class="outline-4">
-<h4 id="sec-2-5-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
-<div class="outline-text-4" id="text-2-5-1">
-<ul class="org-ul">
-<li>Cache sizes go from standard small (1.3GB) to enhanced xxlarge (29GB)
-</li>
-</ul>
 </div>
-</div>
-</div>
+
 <div id="outline-container-sec-2-6" class="outline-3">
 <h3 id="sec-2-6">Key indicators against use&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-6">
 <ul class="org-ul">
 <li>Inverse of the indicators for use
 </li>
-<li>Have differing opinions on Redis and backups or security
-</li>
 <li>You want to use unsupported versions of Redis or Memcached
+</li>
+<li>You want to use Redis with no limitations.
 </li>
 </ul>
 </div>
@@ -402,12 +431,23 @@ in the GB range
 <h4 id="sec-2-6-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
 <div class="outline-text-4" id="text-2-6-1">
 <p>
-ElastiCache handles the above Redis topics for you so it's only a
-problem if your opinions differ.
+<b>REPLACE</b>
 </p>
+
+<ul class="org-ul">
+<li>Inverse of the indicators for use
+</li>
+<li>You want to use unsupported versions of Redis or Memcached
+</li>
+<li>You want to use Redis with no limitations. On ElastiCache, Redis
+passwords can't be used, there are read cluster limitations
+and some commands are unavailable.
+</li>
+</ul>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-7" class="outline-3">
 <h3 id="sec-2-7">Fundamental tradeoffs&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-7">
@@ -428,7 +468,20 @@ automated
 </li>
 </ul>
 </div>
+<div id="outline-container-sec-2-7-1" class="outline-4">
+<h4 id="sec-2-7-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-2-7-1">
+<p>
+<b>BEFORE</b>
+</p>
+<ul class="org-ul">
+<li>You get a service that is &#x2026;
+</li>
+</ul>
 </div>
+</div>
+</div>
+
 <div id="outline-container-sec-2-8" class="outline-3">
 <h3 id="sec-2-8">Fundamental tradeoffs (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-8">
@@ -455,6 +508,7 @@ engine.
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-2-9" class="outline-3">
 <h3 id="sec-2-9">Alternatives&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-9">
@@ -478,7 +532,28 @@ server
 </li>
 </ul>
 </div>
+<div id="outline-container-sec-2-9-1" class="outline-4">
+<h4 id="sec-2-9-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-2-9-1">
+<p>
+<b>REPLACE</b>
+</p>
+<ul class="org-ul">
+<li>RedisLabs provides both Memcached and Redis services.
+</li>
+<li>It aims to provide a truly hands-off service. No nodes, clusters or
+engine-specific configuration. You basically pick
+the memory size you want and pay up for additional features like
+replication, multiple AZs and backups.
+</li>
+<li>The platforms they're available on is impressive - AWS, Azure,
+SoftLayer and GCE. Same goes for their backups.
+</li>
+</ul>
 </div>
+</div>
+</div>
+
 <div id="outline-container-sec-2-10" class="outline-3">
 <h3 id="sec-2-10">Alternatives (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-10">
@@ -505,6 +580,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 </p>
 </div>
 </div>
+
 <div id="outline-container-sec-2-11" class="outline-3">
 <h3 id="sec-2-11">Application characteristics&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-11">
@@ -530,6 +606,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-2-12" class="outline-3">
 <h3 id="sec-2-12">Application characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-12">
@@ -554,6 +631,7 @@ by Amazon.
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-2-13" class="outline-3">
 <h3 id="sec-2-13">Application characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-13">
@@ -583,6 +661,9 @@ client-side widgets
 <div id="outline-container-sec-2-13-1" class="outline-4">
 <h4 id="sec-2-13-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
 <div class="outline-text-4" id="text-2-13-1">
+<p>
+<b>REPLACE</b>
+</p>
 <ul class="org-ul">
 <li><a href="http://aws.amazon.com/solutions/case-studies/placeiq/">PlaceIQ</a>
 <ul class="org-ul">
@@ -607,9 +688,13 @@ the team 20 hours a week and resulted in 92% improvement in response times
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-14" class="outline-3">
 <h3 id="sec-2-14">Operational characteristics&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-14">
+<p>
+<b>REPLACE</b>
+</p>
 <ul class="org-ul">
 <li>Latency
 <ul class="org-ul">
@@ -636,21 +721,40 @@ second, depending on node type.
 <h4 id="sec-2-14-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
 <div class="outline-text-4" id="text-2-14-1">
 <ul class="org-ul">
-<li>Amazon describes latency across their services with low, medium and
-high.
+<li>Latency
+<ul class="org-ul">
+<li>Low latency to other Availability Zones (AZ) in the same region.
+Unfortunately there are no guarantees on what low means here. If
+it helps at all, Amazon categorizes latency across their services
+with low, medium and high.
 </li>
-<li>Without knowing if this company is properly benchmarking on EC2, only
-treat numbers as rough orders of magnitude
+<li>While looking for any latency numbers I did come across one company's
+blog. They benchmarked different Redis node types using
+redis-benchmark, a command that comes with Redis. Knowing that
+benchmarking on EC2 can be tricky, heed these results accordingly.
+According to their benchmarks, the 99th percentile latency for all
+node types was in the single digit millisecond range except for the
+micro and small types which were orders of magnitude more.
 </li>
-<li>As long as its a cache hit, throughput can be high
+</ul>
 </li>
-<li>redis-benchmark comes with Redis and allows you to specify which
-commands to run.
+
+<li>Throughput
+<ul class="org-ul">
+<li>Caches are designed to provide high throughput and ElastiCache is
+no exception.
+</li>
+<li>The same blog post found throughput ranging from 10k to 70k ops per
+second, depending on node type. Again this will vary a lot,
+especially depending on what Redis command you're benchmarking.
+</li>
+</ul>
 </li>
 </ul>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-15" class="outline-3">
 <h3 id="sec-2-15">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-15">
@@ -674,16 +778,24 @@ instances you're mostly paying for more unused cores.
 <div id="outline-container-sec-2-15-1" class="outline-4">
 <h4 id="sec-2-15-1">notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
 <div class="outline-text-4" id="text-2-15-1">
+<p>
+<b>REPLACE</b>
+</p>
 <ul class="org-ul">
-<li>mid-range nodes offer higher ECUs - EC2 Computing Units
+<li>The last thing to mention on throughput is that you get diminishing
+returns for the largest Redis nodes. Since Redis is single-threaded
+and the largest nodes mainly provide more cores, the value add
+diminishes.
 </li>
-<li>Yes, I've only talked about Redis. Found no numbers on Memcached but
-since it's multi-threaded it should do better with larger nodeOBs.
+<li>You can see this on the table provided by that benchmark's results
+if you look at their OPS per $. You'll see that micro and small are
+the best deal as far as OPS per $ goes but beware of their latency.
 </li>
 </ul>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-16" class="outline-3">
 <h3 id="sec-2-16">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-16">
@@ -698,13 +810,28 @@ since it's multi-threaded it should do better with larger nodeOBs.
 </li>
 <li>Both write and read nodes scale up but require new clusters
 </li>
-<li><a href="http://redislabs.com/blog/the-endless-redis-replication-loop-what-why-and-how-to-solve-it">There may be demons</a> with scaling up Redis replication, Redis 2.6.X and &gt; 25GB
+<li><a href="http://redislabs.com/blog/the-endless-redis-replication-loop-what-why-and-how-to-solve-it">There may be demons</a> with scaling up Redis replication, Redis 2.6.X
+and &gt; 25GB
 </li>
 </ul>
 </li>
 </ul>
 </div>
+<div id="outline-container-sec-2-16-1" class="outline-4">
+<h4 id="sec-2-16-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
+<div class="outline-text-4" id="text-2-16-1">
+<p>
+<b>BEFORE</b>
+</p>
+<ul class="org-ul">
+<li>For scalability we're going to talk about read and write scalability
+as well as scaling out and up.
+</li>
+</ul>
 </div>
+</div>
+</div>
+
 <div id="outline-container-sec-2-17" class="outline-3">
 <h3 id="sec-2-17">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-17">
@@ -729,18 +856,8 @@ since it's multi-threaded it should do better with larger nodeOBs.
 </li>
 </ul>
 </div>
-<div id="outline-container-sec-2-17-1" class="outline-4">
-<h4 id="sec-2-17-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
-<div class="outline-text-4" id="text-2-17-1">
-<ul class="org-ul">
-<li>Takes a few minutes assuming you're configured correctly
-</li>
-<li>Clients poll every minute for auto discovery
-</li>
-</ul>
 </div>
-</div>
-</div>
+
 <div id="outline-container-sec-2-18" class="outline-3">
 <h3 id="sec-2-18">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-18">
@@ -766,17 +883,18 @@ EC2 security group
 <div id="outline-container-sec-2-18-1" class="outline-4">
 <h4 id="sec-2-18-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
 <div class="outline-text-4" id="text-2-18-1">
+<p>
+<b>ADD</b>
+</p>
 <ul class="org-ul">
-<li>"IP-range based access control is currently not enabled for Cache
-Clusters"
-</li>
-<li>"Currently, all clients to an ElastiCache Cluster must be within the
-Amazon EC2 network" - You can always hope
+<li>Also worth noting that IP-range based access control is not enabled
+for Cache Clusters.
 </li>
 </ul>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-19" class="outline-3">
 <h3 id="sec-2-19">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-19">
@@ -786,7 +904,7 @@ TODO
 <ul class="org-ul">
 <li>Security
 <ul class="org-ul">
-<li>Supports private clusters within a Virtual Private Cloud (VPC). This requires:
+<li>Supports private clusters within a VPC. This requires:
 <ul class="org-ul">
 <li>A VPC with at least one subnet
 </li>
@@ -802,6 +920,7 @@ IPS needed for cache node replacement
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-2-20" class="outline-3">
 <h3 id="sec-2-20">Operational characteristics (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-20">
@@ -823,16 +942,8 @@ primary fails to heal, manually promote a read
 </li>
 </ul>
 </div>
-<div id="outline-container-sec-2-20-1" class="outline-4">
-<h4 id="sec-2-20-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
-<div class="outline-text-4" id="text-2-20-1">
-<ul class="org-ul">
-<li>Could explain how cache node failures work
-</li>
-</ul>
 </div>
-</div>
-</div>
+
 <div id="outline-container-sec-2-21" class="outline-3">
 <h3 id="sec-2-21">What does it cost?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-2-21">
@@ -848,24 +959,13 @@ primary fails to heal, manually promote a read
 </ul>
 </li>
 <li>Data transfer: Only charge is on EC2 instance to another AZ - <i>only</i>
-  on the EC2 end.
+on the EC2 end.
 </li>
 <li>Backup: Storage is $0.085/GB every month. Data transfer is no charge.
 </li>
 <li>For more, see <a href="https://aws.amazon.com/elasticache/pricing/">pricing page</a>
 </li>
 </ul>
-</div>
-<div id="outline-container-sec-2-21-1" class="outline-4">
-<h4 id="sec-2-21-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h4>
-<div class="outline-text-4" id="text-2-21-1">
-<ul class="org-ul">
-<li>Partial hours get rounded up.
-</li>
-<li>Billing starts when node is in 'Available' state.
-</li>
-</ul>
-</div>
 </div>
 </div>
 </div>
@@ -904,6 +1004,7 @@ by default. See Docs for more
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-3-2" class="outline-3">
 <h3 id="sec-3-2">Which caching engine do I choose?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-2">
@@ -935,6 +1036,7 @@ compliant, easy to configure
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-3-3" class="outline-3">
 <h3 id="sec-3-3">Which caching engine do I choose? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-3">
@@ -970,6 +1072,7 @@ another feature i.e. multiple AZs.
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-3-4" class="outline-3">
 <h3 id="sec-3-4">Which node type should I choose?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-4">
@@ -1008,10 +1111,13 @@ memory, cpu and hit rate
 </li>
 <li>micro doesn't have AOF or snapshot or &#x2026;
 </li>
+<li>Cache sizes go from standard small (1.3GB) to enhanced xxlarge (29GB)
+</li>
 </ul>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-3-5" class="outline-3">
 <h3 id="sec-3-5">How do I mitigate failure modes?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-5">
@@ -1049,6 +1155,7 @@ nodes
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-3-6" class="outline-3">
 <h3 id="sec-3-6">How do I mitigate failure modes? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-6">
@@ -1091,6 +1198,7 @@ cache
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-3-7" class="outline-3">
 <h3 id="sec-3-7">What Cache Parameters should I be aware of?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-7">
@@ -1112,6 +1220,7 @@ cache
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-3-8" class="outline-3">
 <h3 id="sec-3-8">What Cache Parameters should I be aware of? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-8">
@@ -1146,6 +1255,7 @@ If no memory for non-redis tasks, this can lead to memory paging
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-3-9" class="outline-3">
 <h3 id="sec-3-9">How should I persist with Redis?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-9">
@@ -1173,6 +1283,7 @@ If no memory for non-redis tasks, this can lead to memory paging
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-3-10" class="outline-3">
 <h3 id="sec-3-10">How should I persist with Redis? (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-3-10">
@@ -1208,6 +1319,7 @@ you can
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4">Summary&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h2>
 <div class="outline-text-2" id="text-4">
@@ -1243,6 +1355,7 @@ you can
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-4-2" class="outline-3">
 <h3 id="sec-4-2">Essential Resources&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-4-2">
@@ -1260,6 +1373,7 @@ you can
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-4-3" class="outline-3">
 <h3 id="sec-4-3">What's next?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-4-3">
@@ -1285,6 +1399,7 @@ you can
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-4-4" class="outline-3">
 <h3 id="sec-4-4">Recommendations for/against use?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-4-4">
@@ -1305,6 +1420,7 @@ your configuration
 </ul>
 </div>
 </div>
+
 <div id="outline-container-sec-4-5" class="outline-3">
 <h3 id="sec-4-5">Final thoughts&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h3>
 <div class="outline-text-3" id="text-4-5">
@@ -1330,6 +1446,7 @@ modes and had automated elasticity
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-5" class="outline-2">
 <h2 id="sec-5">END</h2>
 <div class="outline-text-2" id="text-5">
@@ -1339,8 +1456,8 @@ modes and had automated elasticity
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Gabriel Horner</p>
-<p class="date">Created: 2014-06-05 Thu 02:26</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.2.1 (<a href="http://orgmode.org">Org</a> mode 8.2.6)</p>
+<p class="date">Created: 2014-06-05 Thu 19:46</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
