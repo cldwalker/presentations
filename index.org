@@ -5,45 +5,47 @@
 * AWS ElastiCache Briefing                                            :slide:
 * Choosing to use                                                     :slide:
 ** What is it?                                                        :slide:
-- Amazon ElastiCache is a web service that provides an
-  in-memory cache for your AWS application.
-- This cache is a scalable cluster of Memcached or Redis protocol-compliant
-  server nodes.
-- This service has a number of features to streamline the
-  management, monitoring and operation of these nodes.
+- Amazon ElastiCache is:
+  - a web service
+  - an in-memory cache
+  - a caching layer for your AWS application
+  - a cluster of Memcached or Redis protocol-compliant nodes
 *** Notes                                                             :notes:
-
-- Amazon ElastiCache is protocol-compliant with Memcached and Redis,
-  so applications that already use another existing Memcached or Redis
-  environment can work seamlessly with this service
+*ADD*
+- Protocol-compliant here means that an application that already uses another
+existing Memcached or Redis environment can work seamlessly with this service
 ** What problems does ElastiCache strive to solve?                    :slide:
-TODO
+- Problem 1: Building a cache cluster
+- Problem 2: Operating a caching cluster
+- Problem 3: Monitoring a caching cluster
+- Problem 4: Automating the above
+*** Notes                                                             :notes:
+*REPLACE*
 - Problem 1: Building a caching cluster requires
   provisioning a server, installing caching software and knowledge of
   how to setup a cluster.
 - Problem 2: Operating a caching cluster requires configuring it,
-  understanding and mitigating its failure modes, updating software,
-  backups (if possible) and more.
+  understanding and mitigating its failure modes, updating software
+  and more maintenance tasks. While configuration is not
+  completely solved with ElastiCache, it aims to start out with
+  good defaults.
 - Problem 3: Monitoring a caching cluster requires gathering a cluster's
-  metrics and having a useful way of interpreting them.
+  metrics and having a useful way of interpreting them e.g. a
+  dashboard. Note that you will still need to understand how to take
+  action on those metrics.
 - Problem 4: Automate all of the above to make a scalable, elastic
-  and fault-tolerant cluster.
-*** Notes                                                             :notes:
-- p2: backups only for redis
-- p2: configuring it is not a solved problem but hopefully one that
-  starts out with more desirable defaults
-- p3: i.e. a visual way perhaps a dashboard
-- p3: you also need to understand how to take action on those metrics
-- p4: fault-tolerant here means being able to lose a node and have one
-  automatically take its place.
+  and fault-tolerant cluster. Fault-tolerant here means being able to
+  lose a node and have one automatically spawn up to replace it.
 ** Fundamental semantics
 *** What is it 'about'?                                              :slide:
 #+BEGIN_HTML
 <div style="text-align: center; font-size: 150%;">Caching!</div>
 #+END_HTML
 
+#+ATTR_HTML: :height 350px
 [[file:img/basic_elasticache_architecture.png]]
 *** What is it 'about'? (cont)                                        :slide:
+TODO: diagrams
 ElastiCache aims to reduce read load on your database, web server, or
 anything that can benefit from caching.
 
@@ -58,8 +60,11 @@ It's about observing how your cache is performing to improve it.
 - Create, edit, assign/authorize and delete cache security groups and subnet groups
 - Create, show, copy, delete and restore Redis snapshots
 **** Notes                                                            :notes:
-Don't read or explain em all
-There's 34 actions in all
+*REPLACE*
+The primary operations are basically CRUD operations across
+its components e.g. INSERT. Yes there's some variation like INSERT.
+In all, ElastiCache has 34 operations - a non-trivial amount given the
+task at hand.
 *** Is it simple?                                                    :slide:
 Theoretically yes - it's just a FewClicks™ caching but ...
 - Different node types can impact throughput, latency.
