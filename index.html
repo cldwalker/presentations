@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>AWS Elasticache</title>
-<!-- 2014-06-05 Thu 00:28 -->
+<!-- 2014-06-05 Thu 02:26 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Gabriel Horner" />
@@ -156,6 +156,9 @@ It's about observing how your cache is performing to improve it.
 <div class="outline-text-5" id="text-2-3-3-1">
 <p>
 <b>REPLACE</b>
+</p>
+
+<p>
 The primary operations are basically CRUD operations across
 its components e.g. INSERT. Yes there's some variation like INSERT.
 In all, ElastiCache has 34 operations - a non-trivial amount given the
@@ -171,9 +174,11 @@ task at hand.
 Theoretically yes - it's just a FewClicks™ caching but &#x2026;
 </p>
 <ul class="org-ul">
-<li>Different node types can impact throughput, latency.
+<li>There a number of operations
 </li>
-<li>Different configurations can impact reliability, durability, elasticity.
+<li>Different node types can impact throughput, elasticity and latency.
+</li>
+<li>Different configurations can impact reliability and durability.
 </li>
 <li>Conceptually grouping Redis and Memcached works until it doesn't.
 </li>
@@ -187,28 +192,37 @@ So <i>NO</i>
 <h5 id="sec-2-3-4-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
 <div class="outline-text-5" id="text-2-3-4-1">
 <p>
-TODO
+<b>REPLACE</b>
+</p>
+
+<p>
+Theoretically yes - it's just a FewClicks™ caching but &#x2026;
 </p>
 <ul class="org-ul">
-<li>many actions
+<li>As you saw, there are a number of operations
 </li>
-<li>configuration, node types and redis/memcached disconnect can make it hard to reason about
+<li>Different node types can impact throughput, elasticity and latency which we'll
+get to later.
 </li>
-<li>redis and memcached have different concepts and features
+<li>Different configurations can impact reliability and durability which
+we'll also address.
 </li>
-<li>redis has replication and backup. memcached has auto-discovery.
-</li>
-<li>redis can be durable
-</li>
-<li>Grouping the two can be confusing as one concept may not apply to
-another i.e. replication and some limits don't apply to others i.e.
-node limit per cluster
+<li>Conceptually grouping Redis and Memcached works until it doesn't. Yes, they both
+have nodes and clusters but their differences soon complicate
+comparison and documentation. Redis has replication and backup. Memcached doesn't.
+Memcached has auto-discovery and Redis doesn't. Redis has durability
+and Memcached doesn't
 </li>
 </ul>
+
+<p>
+SO NO
+</p>
 </div>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-2-4" class="outline-3">
 <h3 id="sec-2-4">Architectural overview</h3>
 <div class="outline-text-3" id="text-2-4">
@@ -227,10 +241,17 @@ node limit per cluster
 <div id="outline-container-sec-2-4-1-1" class="outline-5">
 <h5 id="sec-2-4-1-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
 <div class="outline-text-5" id="text-2-4-1-1">
+<p>
+<b>REPLACE</b>
+</p>
 <ul class="org-ul">
-<li>node runs an instance of memcached/redis
+<li>engine: Redis or Memcached
 </li>
-<li>redis only has one node per cluster 
+<li>node: Smallest building block with its own DNS name and port. It
+runs an instance of memcached/redis
+</li>
+<li>cluster: Group of nodes with the same engine type. Note, Redis is
+only allowed one node per cluster.
 </li>
 </ul>
 </div>
@@ -239,11 +260,10 @@ node limit per cluster
 <div id="outline-container-sec-2-4-2" class="outline-4">
 <h4 id="sec-2-4-2">Key components (cont)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="slide">slide</span></span></h4>
 <div class="outline-text-4" id="text-2-4-2">
-
-<div class="figure">
-<p><img src="img/cluster_diagrams.png" alt="cluster_diagrams.png" />
+<p>
+TODO: slit up
+<img src="img/cluster_diagrams.png" alt="cluster_diagrams.png" />
 </p>
-</div>
 </div>
 </div>
 <div id="outline-container-sec-2-4-3" class="outline-4">
@@ -265,8 +285,11 @@ read clusters
 <div id="outline-container-sec-2-4-3-1" class="outline-5">
 <h5 id="sec-2-4-3-1">Notes&#xa0;&#xa0;&#xa0;<span class="tag"><span class="notes">notes</span></span></h5>
 <div class="outline-text-5" id="text-2-4-3-1">
+<p>
+<b>ADD</b>
+</p>
 <ul class="org-ul">
-<li>Think of replication group as cluster group
+<li>If it helps, think of a replication group as a group of clusters.
 </li>
 </ul>
 </div>
@@ -277,7 +300,7 @@ read clusters
 <div class="outline-text-4" id="text-2-4-4">
 
 <div class="figure">
-<p><img src="img/elasticache_components.png" alt="elasticache_components.png" />
+<p><img src="img/elasticache_components.png" alt="elasticache_components.png" height="400px" />
 </p>
 </div>
 </div>
@@ -1316,7 +1339,7 @@ modes and had automated elasticity
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Gabriel Horner</p>
-<p class="date">Created: 2014-06-05 Thu 00:28</p>
+<p class="date">Created: 2014-06-05 Thu 02:26</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.2.1 (<a href="http://orgmode.org">Org</a> mode 8.2.6)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

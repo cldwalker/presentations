@@ -61,36 +61,50 @@ It's about observing how your cache is performing to improve it.
 - Create, show, copy, delete and restore Redis snapshots
 **** Notes                                                            :notes:
 *REPLACE*
+
 The primary operations are basically CRUD operations across
 its components e.g. INSERT. Yes there's some variation like INSERT.
 In all, ElastiCache has 34 operations - a non-trivial amount given the
 task at hand.
 *** Is it simple?                                                    :slide:
 Theoretically yes - it's just a FewClicks™ caching but ...
-- Different node types can impact throughput, latency.
-- Different configurations can impact reliability, durability, elasticity.
+- There a number of operations
+- Different node types can impact throughput, elasticity and latency.
+- Different configurations can impact reliability and durability.
 - Conceptually grouping Redis and Memcached works until it doesn't.
 
 So /NO/
 **** Notes                                                            :notes:
-TODO
-- many actions
-- configuration, node types and redis/memcached disconnect can make it hard to reason about
-- redis and memcached have different concepts and features
-- redis has replication and backup. memcached has auto-discovery.
-- redis can be durable
-- Grouping the two can be confusing as one concept may not apply to
-  another i.e. replication and some limits don't apply to others i.e.
-  node limit per cluster
+*REPLACE*
+
+Theoretically yes - it's just a FewClicks™ caching but ...
+- As you saw, there are a number of operations
+- Different node types can impact throughput, elasticity and latency which we'll
+  get to later.
+- Different configurations can impact reliability and durability which
+  we'll also address.
+- Conceptually grouping Redis and Memcached works until it doesn't. Yes, they both
+  have nodes and clusters but their differences soon complicate
+  comparison and documentation. Redis has replication and backup. Memcached doesn't.
+  Memcached has auto-discovery and Redis doesn't. Redis has durability
+  and Memcached doesn't
+
+SO NO
+
 ** Architectural overview
 *** Key components                                                    :slide:
 - engine: Redis or Memcached
 - node: Smallest building block with its own DNS name and port
 - cluster: Group of nodes with the same engine type
 **** Notes                                                            :notes:
-- node runs an instance of memcached/redis
-- redis only has one node per cluster 
+*REPLACE*
+- engine: Redis or Memcached
+- node: Smallest building block with its own DNS name and port. It
+  runs an instance of memcached/redis
+- cluster: Group of nodes with the same engine type. Note, Redis is
+  only allowed one node per cluster.
 *** Key components (cont)                                             :slide:
+TODO: slit up
 [[file:img/cluster_diagrams.png]]
 *** Key components (cont)                                             :slide:
 - cache parameter group: Group of parameters to be associated with a
@@ -100,8 +114,10 @@ TODO
 - Redis replication group: One primary/write cluster and up to five
   read clusters
 **** Notes                                                            :notes:
-- Think of replication group as cluster group
+*ADD*
+- If it helps, think of a replication group as a group of clusters.
 *** Key components (cont)                                             :slide:
+#+ATTR_HTML: :height 400px
 [[file:img/elasticache_components.png]]
 *** Key features/functions                                            :slide:
 - Provision and operation of clusters of Memcached/Redis nodes
