@@ -113,7 +113,7 @@ SO NO
   be equally written to, which is great for write scalability but not
   read scalability. For Redis, the master is the writeable node and
   the rest are read nodes. Note that Redis has the inverse problem of Memcached,
-  great for read scalability but not so much for write scalability.
+  great for read scalability but not for write scalability.
 *** Key components (cont)                                             :slide:
 - cache parameter group: Group of parameters to be associated with a
   cluster
@@ -266,25 +266,22 @@ You give up:
   - Caches are designed to provide high throughput.
   - Blog post used redis-benchmark and found throughput ranging from 10k to 70k ops per
     second, depending on node type.
-*** notes                                                             :notes:
+*** Notes                                                             :notes:
 *REPLACE*
-- Latency
-  - Low latency to other Availability Zones (AZ) in the same region.
+- Low latency to other Availability Zones (AZ) in the same region.
     Unfortunately there are no guarantees on what low means here. If
     it helps at all, Amazon categorizes latency across their services
     with low, medium and high.
-  - While looking for any latency numbers I did come across one company's
+- While looking for any latency numbers I did come across one company's
     blog. They benchmarked different Redis node types using
     redis-benchmark, a command that comes with Redis. Knowing that
     benchmarking on EC2 can be tricky, heed these results accordingly.
     According to their benchmarks, the 99th percentile latency for all
     node types was in the single digit millisecond range except for the
     micro and small types which were orders of magnitude more.
-
-- Throughput
-  - Caches are designed to provide high throughput and ElastiCache is
+- Caches are designed to provide high throughput and ElastiCache is
     no exception.
-  - The same blog post found throughput ranging from 10k to 70k ops per
+- The same blog post found throughput ranging from 10k to 70k ops per
     second, depending on node type. Again this will vary a lot,
     especially depending on what Redis command you're benchmarking.
 ** Operational characteristics (cont)                                 :slide:
@@ -295,7 +292,7 @@ You give up:
 
 #+ATTR_HTML: :height 175px
 [[file:img/redis_benchmarks.png]]
-*** notes                                                             :notes:
+*** Notes                                                             :notes:
 *REPLACE*
 - The last thing to mention on throughput is that you get diminishing
   returns for the largest Redis nodes. Since Redis is single-threaded
@@ -335,7 +332,7 @@ You give up:
 *** Notes                                                             :notes:
 *ADD*
 - Also worth noting that IP-range based access control is not enabled
-  for Cache Clusters.
+  for your cluster.
 ** Operational characteristics (cont)                                 :slide:
 - Security (cont)
   - Supports private clusters within a VPC. This requires:
