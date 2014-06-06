@@ -210,16 +210,15 @@ You give up:
 - The platforms they're available on is impressive - AWS, Azure,
   SoftLayer and GCE. Same goes for their backups.
 ** Alternatives (cont)                                                :slide:
-- [[https://www.memcachier.com/][Memcachier]] - Memcached only. Similar to RedisLabs in simplicity.
-- Redis only
-  - [[http://redistogo.com/][Redis to Go]] - Limiting plans and features. Poor documentation.
-    Early Heroku addon
-  - [[http://www.redisgreen.net/][RedisGreen]] - Simple but with more features - provides dedicated
-    machines, hourly backups and metrics dashboard
-  - [[http://azure.microsoft.com/en-us/services/cache/][Microsoft Azure Redis Cache]] - Redis features somewhere between
-    RedisLabs and ElastiCache
+- [[https://www.memcachier.com/][Memcachier]] - Memcached only. Similar to RedisLabs in end-user experience.
+- [[http://redistogo.com/][Redis to Go]] - Limiting plans and features. Poor documentation.
+  Early Heroku addon
+- [[http://www.redisgreen.net/][RedisGreen]] - More features than Redis to Go - provides dedicated
+  machines, hourly backups and metrics dashboard
+- [[http://azure.microsoft.com/en-us/services/cache/][Microsoft Azure Redis Cache]] - Redis features somewhere between
+  RedisLabs and ElastiCache
 
-Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
+*Recommendation*: RedisLabs and Azure Redis Cache are worth investigating.
 ** Application characteristics                                        :slide:
 - Environment: Hosted on AWS
 - Docs: Excellent, like most AWS documentation
@@ -258,7 +257,6 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
   - Team was able to implement a solution in less than a week, saves
     the team 20 hours a week and resulted in 92% improvement in response times
 ** Operational characteristics                                        :slide:
-*REPLACE*
 - Latency
   - Low latency to other Availability Zones (AZ) in the same region
   - According to [[http://blog.meldium.com/home/2013/9/13/benchmarking-redis-on-aws-elasticache][this post]], 99th percentile latency from a Redis node to an EC2
@@ -269,6 +267,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
   - Blog post used redis-benchmark and found throughput ranging from 10k to 70k ops per
     second, depending on node type.
 *** notes                                                             :notes:
+*REPLACE*
 - Latency
   - Low latency to other Availability Zones (AZ) in the same region.
     Unfortunately there are no guarantees on what low means here. If
@@ -294,6 +293,7 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
     because Redis is single-threaded and in the largest 
     instances you're mostly paying for more unused cores.
 
+#+ATTR_HTML: :height 175px
 [[file:img/redis_benchmarks.png]]
 *** notes                                                             :notes:
 *REPLACE*
@@ -350,13 +350,13 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
     primary fails to heal, manually promote a read
   - Cache node reboots
 ** What does it cost?                                                 :slide:
-- Billing is per hour per node ($0.022 to $1.207).
+- Billing is per hour per node ($0.02 to $1.20).
 - Reserved Cache Nodes
   - Pay up front for 1 or 3 years.
   - Three tiers - the more you pay upfront, the less you pay per hour.
 - Data transfer: Only charge is on EC2 instance to another AZ - /only/
   on the EC2 end.
-- Backup: Storage is $0.085/GB every month. Data transfer is no charge.
+- Backup: Storage is $0.08/GB every month. Data transfer is no charge.
 - For more, see [[https://aws.amazon.com/elasticache/pricing/][pricing page]]
 * In Use                                                              :slide:
 ** What are the critical decisions?                                   :slide:
@@ -368,8 +368,8 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 - How should I persist with Redis?
 - Which metrics should I monitor? - [[http://docs.aws.amazon.com/AmazonElastiCache/latest/UserGuide/CacheMetrics.WhichShouldIMonitor.html][See Docs]]
 *** Notes                                                             :notes:
-- How do I handle upgrades? Auto upgrading patch versions are enabled
-  by default. See Docs for more
+* ADD
+- It's worth noting that patch upgrade versions are automatic by default.
 ** Which caching engine do I choose?                                  :slide:
 - Memcached
   - Pro: Multi-threaded
@@ -388,28 +388,28 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
   - Pro: Replication - allows for data across multiple AZs
   - Cons: Single-threaded and more complex
 
-Recommendation: Use Memcached until you need a Redis data type or
-another feature i.e. multiple AZs.
+*Recommendation*: Use Memcached until you need a Redis feature
 *** Notes                                                             :notes:
 - Data types: Sorted sets for time-series, hashes for sessions, lists
 ** Which node type should I choose?                                   :slide:
 - Factor cost - per system characteristic if possible
-- Factor total memory
+- Factor total memory - range from 0.2GB to 68GB
   - Easy to scale out with Memcached.
   - Must choose more accurately with Redis.
 - Factor throughput - More ECUs and cores on larger boxes
 - Factory latency - double check but most likely avoid micro and
   small
-- Recommendation: Depends on above. Avoid micro on production
+*Recommendation*: Depends on above. Avoid micro on production
 *** Notes                                                             :notes:
 *REPLACE*
-- Factor cost - per system characteristic if possible i.e. ops per $
-- Factor total memory which can range from 0.2GB to 68GB
+- Obviously Factor cost. Consider system characteristic like ops per $
+  if possible.
+- Factor how much memory you'll need. This can range from 0.2GB to 68GB
   - Easy to scale out with Memcached.
   - Must choose more accurately with Redis.
 - Factor throughput - More ECUs and cores on larger boxes. Remember
   that Redis is single threaded and what that means for the largest types.
-- Factory latency - double check the benchmark post I mentioned
+- Factory latency - Double check the benchmark post I mentioned
   earlier but most likely avoid micro and small
 - Recommendation: Depends on above. Avoid micro on production. There
   were multiple types where I came across features that weren't even
@@ -417,7 +417,7 @@ another feature i.e. multiple AZs.
 ** How do I mitigate failure modes?                                   :slide:
 - AZ failure - Have nodes in multiple AZs.
   - Only possible out of the box with Redis replication groups
-- Node failure - Keep your cache hit rate up
+- Node failure - Try to keep your cache hit rate up
   - Memcached
     - Docs recommend being able to handle one or 2 nodes failing
     - For example, for a 14GB requirement, better to have 2 7GB nodes
@@ -468,7 +468,7 @@ If no memory for non-redis tasks, this can lead to memory paging
 ** How should I persist with Redis?                                   :slide:
 - AOF
   - Pro: Just a config switch away
-  - Pro: No financial cost
+  - Pro: No additional cost
   - Con: Guards against reboot and nothing else
 - Backups
   - Pro: Daily automated snapshots
