@@ -45,7 +45,6 @@ existing Memcached or Redis environment can work seamlessly with this service
 #+ATTR_HTML: :height 350px
 [[file:img/basic_elasticache_architecture.png]]
 *** What is it 'about'? (cont)                                        :slide:
-TODO: diagrams
 ElastiCache aims to reduce read load on your database, web server, or
 anything that can benefit from caching.
 
@@ -338,13 +337,10 @@ Recommendation: RedisLabs and Azure Redis Cache are worth investigating.
 - Also worth noting that IP-range based access control is not enabled
   for Cache Clusters.
 ** Operational characteristics (cont)                                 :slide:
-TODO
-- Security
+- Security (cont)
   - Supports private clusters within a VPC. This requires:
     - A VPC with at least one subnet
-    - A Cache Subnet Group for your VPC to associate with previous subnet
-    - Allocating enough CIDR blocks to your subnet to allow for spare
-      IPS needed for cache node replacement
+    - A Cache Subnet Group for your VPC to associate with the subnet
 ** Operational characteristics (cont)                                 :slide:
 - Failure Modes
   - Region fails - that's a problem
@@ -406,13 +402,18 @@ another feature i.e. multiple AZs.
   small
 - Recommendation: Depends on above. Avoid micro on production
 *** Notes                                                             :notes:
-- cost - consider ops/$
-- memory ranges from .2GB to 68GB
-- throughput - be aware of Redis single-thread and largest boxes
-- Amazon suggests starting out small on Memcached and monitoring
-  memory, cpu and hit rate
-- micro doesn't have AOF or snapshot or ...
-- Cache sizes go from standard small (1.3GB) to enhanced xxlarge (29GB)
+*REPLACE*
+- Factor cost - per system characteristic if possible i.e. ops per $
+- Factor total memory which can range from 0.2GB to 68GB
+  - Easy to scale out with Memcached.
+  - Must choose more accurately with Redis.
+- Factor throughput - More ECUs and cores on larger boxes. Remember
+  that Redis is single threaded and what that means for the largest types.
+- Factory latency - double check the benchmark post I mentioned
+  earlier but most likely avoid micro and small
+- Recommendation: Depends on above. Avoid micro on production. There
+  were multiple types where I came across features that weren't even
+  allowed on a micro i.e. AOF or snapshot.
 ** How do I mitigate failure modes?                                   :slide:
 - AZ failure - Have nodes in multiple AZs.
   - Only possible out of the box with Redis replication groups
@@ -422,9 +423,10 @@ another feature i.e. multiple AZs.
     - For example, for a 14GB requirement, better to have 2 7GB nodes
       than one 14 GB
 *** notes                                                             :notes:
-- Possible to handle AZ failure in Memcached but requires doing this
-  in the app layer and increasing the number of writes to redundant
-  nodes
+*ADD*
+- Note that it is possible to handle AZ failure in Memcached but that
+  requires handling it in the app layer which increases the number of
+  writes to redundant nodes
 ** How do I mitigate failure modes? (cont)                            :slide:
 - Node failure (cont)
   - Redis
@@ -434,11 +436,17 @@ another feature i.e. multiple AZs.
     - Memcached: Nada
     - Redis: Turn on Append-Only Files (AOF) for reboot failure
 *** Notes                                                             :notes:
-- snapshots can have a performance impact spawning child process which
-  can block parent for up to 10s
-- AOF works by replaying file on bootup which results in restored
-  cache
-- reboots need to happen for configs to set in
+*REPLACE*
+- Node failure (cont)
+  - Redis
+    - Use replication groups for minimal cache loss
+    - Manual or daily snapshots. But be aware that snapshots can have
+      a performance impact spawning child process which can block parent for up to 10s
+- Node reboots: Be aware that this needs to happen in order for a
+  config change to take place.
+    - Memcached: Nada
+    - Redis: Turn on Append-Only Files (AOF) for reboot failure. AOF
+      works by replaying file on bootup which results in restored
 ** What Cache Parameters should I be aware of?                        :slide:
 - Memcached has over a dozen and Redis has 30+
 - Memcached - memcached_connections_overhead
@@ -475,8 +483,8 @@ If no memory for non-redis tasks, this can lead to memory paging
   - Pro: Can handle write failover with almost no cache loss
   - Con: Incur cost of new nodes
 *** Notes                                                             :notes:
-Recommendation: Choose based on system needs and cost. All of em if
-you can
+*ADD*
+- Recommendation: Choose based on system needs and cost. All of em if you can
 * Summary                                                             :slide:
 ** Questions                                                          :slide:
 - Is there auto scaling for ElastiCache?
