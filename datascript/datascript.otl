@@ -1,0 +1,85 @@
+presentation #ignore
+  Choosing to use
+    What is it?
+      An immutable in-memory database and Datalog query engine in ClojureScript. Clojure support coming.
+    What problems does the tech strive to solve?
+      Application state is spread across the app
+      Mutating app state in place and losing history
+      Lacking powerful query of app state
+  Fundamental semantics
+    What is it about?
+      Ephemeral in-memory storage
+      Data-driven querying
+      Immutable app state keeping track of facts/datoms with no history lost
+    What are the primary operations?
+      create connection
+      synchronous transact - write,update,delete
+      query - read
+    Is it simple?
+      Mostly yes. It's an immutable storage solution that accrues data and exposes
+      that data through powerful queries. It doesn't auto-sync with a server,
+      persist to local storage or make assumptions about what data to store. However, porting
+      it to Clojure may start to alter its goals and alter what used to be client-focused design.
+      Also it's query language is contiously being updated to match Datomic which is great
+      feature wise but could complicate the query language.
+  Architectural overview
+    Key components
+      Application Data
+      Schema
+      Connection, Database
+      Query: datalog, entity, datoms
+    Key features/functions
+      Non-query features
+        database as a value
+        EAVT, AEVT and AVET indexes
+        callback listeners with listen!
+        Direct index lookup and iteration
+        Filtered databases
+        Lookup refs
+        Pull API
+        serializable transaction format from Datomic
+      Queries
+        joins
+        query over db or a collection
+        parameterized queries via :in
+        database fns
+        retract, retractEntity
+        rules, recursive rules
+      See more at https://github.com/tonsky/datascript#project-status
+  Key indicators for use
+    Complex app state that can fit in memory
+    Powerful queries over app state
+    Queries and transactions as data and the benefits that those provides
+    App state history to recreate screens or view audit trails
+    Pairs well with rendering libraries that use monolithic app state e.g React
+  Key indicators against use
+    Can't fit app state in browser memory
+    Heavy volume of fast writes
+    Heavy use of storing blobs
+    Want light dependency in JS (367K)
+    Multiple clients in clj. No serious guarantees as a DB
+  Fundamental tradeoffs
+    Monolithic app-state can couple code and require deep tree navigation vs spread-out decoupled state
+    Managing all app state may not play friendly with libraries that want to manage parts of app state
+  What are some alternatives?
+    LocalStorage and SessionStorage - 10MB total
+    IndexedDB - up to 50MB, much less on mobile
+    Datomic in Clojure
+    ForeRunner - Client-side DB with JSON query language that persists across page loads
+    PouchDB - Client-side and can run on server as CouchDB compatible, async queries
+    LokiJS (fast key/val), TaffyDB (sql-like), Nedb (mongo queries)
+  Application characteristics
+    Environment - cljs, clj, js (script, commonjs/npm, requirejs)
+    ￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼￼Docs - Scarce in code. Fun examples
+    ￼￼￼API quality - Mostly stable though stated as alpha
+    Community - Hip with gitter. Responsive with issues and in mailing list
+    Longevity - Since April 2014. Core team is mostly one person which can be worrisome
+    Experience reports - Multiple companies using it. Personally enjoyed using it
+    Operational characteristics - Just use as a dependency
+  In Use - For another time
+  Links
+    https://github.com/tonsky/datascript - home page with tons of great links
+    https://github.com/tonsky/datascript-chat - fun cat chat example
+    https://github.com/someteam/acha - funny git achievements
+    https://github.com/cldwalker/kukui - experimental outline as datascript db
+    https://github.com/cldwalker/dlint - simple linter that is datascript compatible
