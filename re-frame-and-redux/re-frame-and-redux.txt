@@ -1,0 +1,73 @@
+re-frame intro
+  assumptions
+    React
+    one main app-db atom
+      https://github.com/Day8/re-frame#the-benefits-of-data-in-the-one-place
+      hoplon does not encourage one app-db but rather small ratoms/cells
+    reagent for reactive updates to app-db changes
+  event flow - https://github.com/Day8/re-frame#event-flow
+    app-db  -->  components  -->  Hiccup  -->  Reagent  -->  VDOM  -->  React  -->  DOM
+    ^                                                                              |
+    |                                                                              v
+    handlers <-------------------  events  -----------------------------------------
+  event handling
+    all events are dispatched to a central event bus
+    Defining event handler: `(register-handler :event-name (fn [] ...))`
+    Dispatching event: `(dispatch [:on-click :arg1 :arg2])`
+    https://github.com/Day8/re-frame#dispatching-events
+  subscriptions in components
+    No explicit references to @app-db but rather subscribe to slices of app-db
+    Defining a subscription: `(register-sub :sub-name (fn [] ...))`
+    Reading a subscription: `(subscribe [:sub-name])`
+    https://github.com/Day8/re-frame#subscribe
+simpleexample demo
+  demo debug and undoable middleware
+  middleware factory - Create a middleware for given args
+  basic middleware example
+  https://github.com/Day8/re-frame/wiki#handler-middleware
+code walkthrough of src/re_frame
+  core.cljs - API ns that delegates to other namespaces
+    register-handler - Defines pure middleware by default
+  db.cljs - home of app-db
+  handlers.cljs - home to event handlers
+    @id->fn - Map of event names to event handlers
+    handle - Closes over @app-db
+  middleware.cljs - Defines main middlewares and middleware factories
+    Explain pure, debug and after
+  router.cljs - Handles processing events via FIFO queue
+    Defines a custom FSM instead of using core.async
+    IEventQueue protocol for main queue actions
+    -process-1st-event - Process top of queue and calls event handler
+  subs.cljs
+  undo.cljs - Handles events and state for undo and redo
+  utils.cljs
+redux intro
+  three principles - http://redux.js.org/docs/introduction/ThreePrinciples.html
+    single store/app-state
+    read-only state
+    changes are made with pure functions
+  actions + reducers make changes to state
+  dispatch([:event])
+re-frame todomvc vs redux todomvc
+  core.cljs -> index.js
+  handlers.cljs -> actions/, constants/, reducers/
+  subs.cljs -> no equivalent in this example, Just pull from state directly
+  views.cljs -> components
+re-frame and redux comparison
+  redux actions + reducers = re-frame event handlers
+  event reducers/handlers are one big case statement instead of a map in redux
+  default redux subscribe is naive. Notifies on every state change
+  redux comes with a number of middleware including different async approaches
+  redux does not depend on react and is being looked at by angular
+  redux community is growing quickly relative to re-frame
+redux-devtools demo
+re-frame apps
+  https://github.com/alwx/luno-react-native
+  https://github.com/madvas/fractalify/
+  https://github.com/staltz/flux-challenge/tree/master/submissions/jelz
+  https://github.com/jhund/tetris-re-frame
+  https://github.com/squest/reframe-alfa
+redux links
+  http://redux.js.org/
+  https://github.com/gaearon/redux-devtools
+  https://github.com/xgrommx/awesome-redux
